@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2007-2012 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ static int _umount_all(Prefs * prefs)
 	int ret = 0;
 	char const path[] = "/proc/mounts";
 	FILE * fp;
-	char buf[1024];
+	unsigned char buf[1024];
 	size_t i;
 	size_t j;
 	int c;
