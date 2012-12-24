@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +170,8 @@ static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr)
 	memset(&ifm, 0, sizeof(ifm));
 	memcpy(ifm.ifm_name, ifr->ifr_name, sizeof(ifm.ifm_name));
 	if(ioctl(fd, SIOCGIFMEDIA, &ifm) != 0)
-		return _ifconfig_error("SIOCGIFMEDIA", 1);
+		return (errno != ENOTTY)
+			? _ifconfig_error("SIOCGIFMEDIA", 1) : 0;
 	printf("\tmedia: %s\n", _mac_media_str(ifm.ifm_current));
 #endif
 	return 0;
