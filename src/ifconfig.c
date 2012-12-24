@@ -234,7 +234,7 @@ static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr)
 	memset(&ifm, 0, sizeof(ifm));
 	memcpy(ifm.ifm_name, ifr->ifr_name, sizeof(ifm.ifm_name));
 	if(ioctl(fd, SIOCGIFMEDIA, &ifm) != 0)
-		return (errno != ENOTTY)
+		return (errno != ENOTTY && errno != EINVAL)
 			? _ifconfig_error("SIOCGIFMEDIA", 1) : 0;
 	printf("\tmedia: %s\n", _mac_media_str(ifm.ifm_current));
 #endif
