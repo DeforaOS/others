@@ -30,6 +30,7 @@
 # include <netinet6/in6_var.h>
 #elif defined(__NetBSD__)
 # include <ifaddrs.h>
+# include <net/if.h>
 # include <netinet6/in6_var.h>
 #endif
 
@@ -66,6 +67,9 @@ static int _ifconfig_do(Prefs prefs, char const * name, int argc,
 		char * argv[]);
 static int _ifconfig_show(Prefs prefs, char const * name);
 static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr);
+#ifdef SIOCGIFFLAGS
+static void _show_mac_flags(unsigned short flags);
+#endif
 static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr);
 static int _show_inet(Prefs prefs, int fd, struct ifreq * ifr);
 static int _show_inet6(Prefs prefs, char const * name);
@@ -148,7 +152,7 @@ static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr)
 	if(ioctl(fd, SIOCGIFFLAGS, ifr) != 0)
 		ret |= _ifconfig_error("SIOCGIFFLAGS", 1);
 	else
-		printf(" flags=%x", (unsigned short)ifr->ifr_flags);
+		_show_mac_flags(ifr->ifr_flags);
 #endif
 #ifdef SIOCGIFDATA
 	memcpy(ifi.ifdr_name, ifr->ifr_name, sizeof(ifi.ifdr_name));
@@ -161,6 +165,66 @@ static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr)
 	ret |= _mac_media(prefs, fd, ifr);
 	return ret;
 }
+
+#ifdef SIOCGIFFLAGS
+static void _show_mac_flags(unsigned short flags)
+{
+	struct
+	{
+		int flag;
+		char const * name;
+	} names[] =
+	{
+#ifdef IFF_UP
+		{ IFF_UP,		"UP"		},
+#endif
+#ifdef IFF_BROADCAST
+		{ IFF_BROADCAST,	"BROADCAST"	},
+#endif
+#ifdef IFF_DEBUG
+		{ IFF_DEBUG,		"DEBUG"		},
+#endif
+#ifdef IFF_LOOPBACK
+		{ IFF_LOOPBACK,		"LOOPBACK"	},
+#endif
+#ifdef IFF_POINTOPOINT
+		{ IFF_POINTOPOINT,	"POINTOPOINT"	},
+#endif
+#ifdef IFF_RUNNING
+		{ IFF_RUNNING,		"RUNNING"	},
+#endif
+#ifdef IFF_NOARP
+		{ IFF_NOARP,		"NOARP"		},
+#endif
+#ifdef IFF_PROMISC
+		{ IFF_PROMISC,		"PROMISC"	},
+#endif
+#ifdef IFF_OACTIVE
+		{ IFF_OACTIVE,		"OACTIVE"	},
+#endif
+#ifdef IFF_SIMPLEX
+		{ IFF_SIMPLEX,		"SIMPLEX"	},
+#endif
+#ifdef IFF_MULTICAST
+		{ IFF_MULTICAST,	"MULTICAST"	},
+#endif
+	};
+	size_t i;
+	char const * sep = "";
+
+	printf(" flags=%x", flags);
+	if(sizeof(names) == 0)
+		return;
+	putchar('<');
+	for(i = 0; i < sizeof(names) / sizeof(*names); i++)
+		if((flags & names[i].flag) == names[i].flag)
+		{
+			printf("%s%s", sep, names[i].name);
+			sep = ",";
+		}
+	putchar('>');
+}
+#endif
 
 static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr)
 {
