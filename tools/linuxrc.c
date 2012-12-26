@@ -45,7 +45,9 @@
 # define MF_NOEXEC		MNT_NOEXEC
 # define MF_NOSUID		MNT_NOSUID
 # define MF_RDONLY		MNT_RDONLY
-# if defined(__FreeBSD__) || (defined(__NetBSD__) && (!defined(__NetBSD_Version__) || __NetBSD_Version__ < 499000000)) /* XXX check */
+# if defined(__APPLE__) || defined(__FreeBSD__) || (defined(__NetBSD__) \
+			&& (!defined(__NetBSD_Version__) \
+				|| __NetBSD_Version__ < 499000000)) /* XXX check */
 #  define mount(type, dir, flags, data, data_len) \
 	mount(type, dir, flags, data)
 # endif
