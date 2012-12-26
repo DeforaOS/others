@@ -480,7 +480,7 @@ static int _mount_do_mount(char const * type, int flags, char const * special,
 # else
 	if(mount(type, node, flags, data) == 0)
 # endif
-#elif defined(__FreeBSD__) /* FreeBSD */
+#elif defined(__APPLE__) || defined(__FreeBSD__) /* FreeBSD */
 	if(mount(type, node, flags, data) == 0)
 #else
 	struct { char const * fspec; } * d = data;
