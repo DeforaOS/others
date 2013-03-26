@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2007 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2007-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ static int _poweroff(void)
 	sync();
 #if defined(RF_HALT) /* DeforaOS */
 	if(reboot(RF_POWEROFF) != 0)
+#elif defined(__OpenBSD__) /* OpenBSD */
+	if(reboot(RB_HALT | RB_POWERDOWN) != 0)
 #elif defined(RB_POWERDOWN) /* NetBSD */
 	if(reboot(RB_POWERDOWN, NULL) != 0)
 #elif defined(RB_POWER_OFF) /* Linux */
