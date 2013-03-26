@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2007-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2007-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ static int _halt(void)
 	if(reboot(RB_HALT) != 0)
 #elif defined(RB_HALT)
 # if defined(__APPLE__) /* MacOS X */
+	if(reboot(RB_HALT) != 0)
+# elif defined(__OpenBSD__) /* OpenBSD */
 	if(reboot(RB_HALT) != 0)
 # else /* NetBSD */
 	if(reboot(RB_HALT, NULL) != 0)
