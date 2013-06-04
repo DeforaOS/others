@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2006-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -353,7 +353,7 @@ static int _extract_do(Prefs * prefs, FILE * fp, char const * archive,
 	_tar_print(prefs, fh);
 	if(_tar_mkdir_parent(fh->filename) != 0)
 		return _tar_skip(fp, archive, fh);
-	switch(fh->type)
+	switch((int)fh->type)
 	{
 		case FT_NORMAL:
 		case FT_CONTIGUOUS:
