@@ -164,33 +164,33 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- halt $(DESTDIR)$(BINDIR)/halt
+	$(INSTALL) -m 0755 halt $(DESTDIR)$(BINDIR)/halt
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- hexdump $(DESTDIR)$(BINDIR)/hexdump
+	$(INSTALL) -m 0755 hexdump $(DESTDIR)$(BINDIR)/hexdump
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- host $(DESTDIR)$(BINDIR)/host
+	$(INSTALL) -m 0755 host $(DESTDIR)$(BINDIR)/host
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- hostname $(DESTDIR)$(BINDIR)/hostname
+	$(INSTALL) -m 0755 hostname $(DESTDIR)$(BINDIR)/hostname
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- ifconfig $(DESTDIR)$(BINDIR)/ifconfig
+	$(INSTALL) -m 0755 ifconfig $(DESTDIR)$(BINDIR)/ifconfig
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- login $(DESTDIR)$(BINDIR)/login
+	$(INSTALL) -m 0755 login $(DESTDIR)$(BINDIR)/login
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- mktemp $(DESTDIR)$(BINDIR)/mktemp
+	$(INSTALL) -m 0755 mktemp $(DESTDIR)$(BINDIR)/mktemp
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- mount $(DESTDIR)$(BINDIR)/mount
+	$(INSTALL) -m 0755 mount $(DESTDIR)$(BINDIR)/mount
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- poweroff $(DESTDIR)$(BINDIR)/poweroff
+	$(INSTALL) -m 0755 poweroff $(DESTDIR)$(BINDIR)/poweroff
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- reboot $(DESTDIR)$(BINDIR)/reboot
+	$(INSTALL) -m 0755 reboot $(DESTDIR)$(BINDIR)/reboot
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- tar $(DESTDIR)$(BINDIR)/tar
+	$(INSTALL) -m 0755 tar $(DESTDIR)$(BINDIR)/tar
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- umount $(DESTDIR)$(BINDIR)/umount
+	$(INSTALL) -m 0755 umount $(DESTDIR)$(BINDIR)/umount
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- uptime $(DESTDIR)$(BINDIR)/uptime
+	$(INSTALL) -m 0755 uptime $(DESTDIR)$(BINDIR)/uptime
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0755 -- w $(DESTDIR)$(BINDIR)/w
+	$(INSTALL) -m 0755 w $(DESTDIR)$(BINDIR)/w
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(BINDIR)/halt
