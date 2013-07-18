@@ -22,7 +22,7 @@
 /* clear */
 static int _clear(void)
 {
-	printf("%c[2J", 0x1b);
+	printf("%c[2J%c[f", 0x1b, 0x1b);
 	return 0;
 }
 
