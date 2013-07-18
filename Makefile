@@ -21,6 +21,7 @@ dist:
 	$(RM) -r -- $(PACKAGE)-$(VERSION)
 	$(LN) -s -- . $(PACKAGE)-$(VERSION)
 	@$(TAR) $(PACKAGE)-$(VERSION).tar.gz -- \
+		$(PACKAGE)-$(VERSION)/src/clear.c \
 		$(PACKAGE)-$(VERSION)/src/halt.c \
 		$(PACKAGE)-$(VERSION)/src/hexdump.c \
 		$(PACKAGE)-$(VERSION)/src/host.c \
