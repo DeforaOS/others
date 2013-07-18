@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2010 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2008-2013 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* others is not free software; you can redistribute it and/or modify it under
  * the terms of the Creative Commons Attribution-NonCommercial-ShareAlike 3.0
@@ -108,6 +108,7 @@ int main(void)
 {
 	size_t i;
 	char dev_cdrom[] = DEV_CDROMX;
+	const char dev_root[] = "0x100\n";
 	struct stat st;
 	int found = 0;
 	FILE * fp;
@@ -140,7 +141,8 @@ int main(void)
 	}
 	if((fp = fopen(PROC_REAL_ROOT_DEV, "w")) == NULL)
 		return _linuxrc_error(PROC_REAL_ROOT_DEV, 0);
-	if(fwrite("0x100\n", sizeof(char), 6, fp) != 6)
+	if(fwrite(dev_root, sizeof(*dev_root), sizeof(dev_root) - 1, fp)
+			!= sizeof(dev_root) - 1)
 		_linuxrc_error(PROC_REAL_ROOT_DEV, 0);
 	if(fclose(fp) != 0)
 		_linuxrc_error(PROC_REAL_ROOT_DEV, 0);
