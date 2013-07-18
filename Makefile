@@ -48,6 +48,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
 		$(PACKAGE)-$(VERSION)/tools/others.sh \
 		$(PACKAGE)-$(VERSION)/tools/otherbox.h \
+		$(PACKAGE)-$(VERSION)/tools/watch.sh \
 		$(PACKAGE)-$(VERSION)/tools/project.conf \
 		$(PACKAGE)-$(VERSION)/Makefile \
 		$(PACKAGE)-$(VERSION)/COPYING \

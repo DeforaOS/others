@@ -1,3 +1,6 @@
+MKDIR	= mkdir -m 0755 -p
+INSTALL	= install
+RM	= rm -f
 TARGETS	= linuxrc oinit otherbox
 PREFIX	= /usr/local
 DESTDIR	=
@@ -56,7 +59,10 @@ distclean: clean
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
+	$(MKDIR) $(DESTDIR)$(BINDIR)
+	$(INSTALL) -m 0644 watch.sh $(DESTDIR)$(BINDIR)/watch.sh
 
 uninstall:
+	$(RM) -- $(DESTDIR)$(BINDIR)/watch.sh
 
 .PHONY: all clean distclean install uninstall
