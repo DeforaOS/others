@@ -18,6 +18,21 @@
 #include "otherbox.h"
 
 
+/* clear.c */
+#define main _clear_main
+#define _usage _clear_usage
+#define _Prefs _clear_Prefs
+#define Prefs clear_Prefs
+#define _prefs_parse _clear_prefs_parse
+#define _clear __clear
+#include "../src/clear.c"
+#undef main
+#undef _usage
+#undef _Prefs
+#undef Prefs
+#undef _prefs_parse
+#undef _clear
+
 /* halt.c */
 #define main _halt_main
 #define _usage _halt_usage
@@ -232,6 +247,7 @@
 Call calls[] =
 {
 
+	{ "clear",	_clear_main	},
 	{ "halt",	_halt_main	},
 	{ "hexdump",	_hexdump_main	},
 	{ "host",	_host_main	},
