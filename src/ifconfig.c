@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2011-2012 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2011-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,45 +175,45 @@ static void _show_mac_flags(unsigned short flags)
 		char const * name;
 	} names[] =
 	{
-#ifdef IFF_UP
+# ifdef IFF_UP
 		{ IFF_UP,		"UP"		},
-#endif
-#ifdef IFF_BROADCAST
+# endif
+# ifdef IFF_BROADCAST
 		{ IFF_BROADCAST,	"BROADCAST"	},
-#endif
-#ifdef IFF_DEBUG
+# endif
+# ifdef IFF_DEBUG
 		{ IFF_DEBUG,		"DEBUG"		},
-#endif
-#ifdef IFF_LOOPBACK
+# endif
+# ifdef IFF_LOOPBACK
 		{ IFF_LOOPBACK,		"LOOPBACK"	},
-#endif
-#ifdef IFF_POINTOPOINT
+# endif
+# ifdef IFF_POINTOPOINT
 		{ IFF_POINTOPOINT,	"POINTOPOINT"	},
-#endif
-#ifdef IFF_RUNNING
+# endif
+# ifdef IFF_RUNNING
 		{ IFF_RUNNING,		"RUNNING"	},
-#endif
-#ifdef IFF_NOARP
+# endif
+# ifdef IFF_NOARP
 		{ IFF_NOARP,		"NOARP"		},
-#endif
-#ifdef IFF_PROMISC
+# endif
+# ifdef IFF_PROMISC
 		{ IFF_PROMISC,		"PROMISC"	},
-#endif
-#ifdef IFF_OACTIVE
+# endif
+# ifdef IFF_OACTIVE
 		{ IFF_OACTIVE,		"OACTIVE"	},
-#endif
-#ifdef IFF_SIMPLEX
+# endif
+# ifdef IFF_SIMPLEX
 		{ IFF_SIMPLEX,		"SIMPLEX"	},
-#endif
-#ifdef IFF_MULTICAST
+# endif
+# ifdef IFF_MULTICAST
 		{ IFF_MULTICAST,	"MULTICAST"	},
-#endif
+# endif
 	};
 	size_t i;
 	char const * sep = "";
 
 	printf(" flags=%x", flags);
-	if(sizeof(names) == 0)
+	if(sizeof(names) == 0 || flags == 0)
 		return;
 	putchar('<');
 	for(i = 0; i < sizeof(names) / sizeof(*names); i++)
@@ -416,5 +416,5 @@ int main(int argc, char * argv[])
 	}
 	else if(optind == argc)
 		return _usage();
-	return ifconfig(prefs, argc - optind, &argv[optind]) == 0 ? 0 : 2;
+	return (ifconfig(prefs, argc - optind, &argv[optind]) == 0) ? 0 : 2;
 }
