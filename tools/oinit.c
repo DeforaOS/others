@@ -15,22 +15,85 @@
 
 
 
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
 
 
+/* oinit */
+/* private */
+/* constants */
+#define PROGNAME	"oinit"
+
+
+/* prototypes */
+static int _oinit(void);
+
+static int _error(char const * message, int ret);
+
+
+/* functions */
+/* oinit */
+static void _oinit_child(void);
+
+static int _oinit(void)
+{
+	pid_t pid;
+
+	if((pid = fork()) == -1)
+		return -_error("fork", 1);
+	else if(pid == 0)
+		_oinit_child();
+	return 0;
+}
+
+static void _oinit_child(void)
+{
+	const char console[] = "/dev/console";
+	const char rc[] = "/etc/rc";
+	char * const rc_argv[] = { "rc", NULL };
+	const char sh[] = "/bin/sh";
+	char * const sh_argv[] = { "sh", "-i", NULL };
+
+	open(console, O_RDONLY);
+	open(console, O_WRONLY);
+	open(console, O_WRONLY);
+	if(setsid() == -1)
+		_error("setsid", 1);
+	else if(setpgid(0, 0) != 0)
+		_error("setpgid", 1);
+	execve(rc, rc_argv, NULL);
+	_error(rc, 1);
+	execv(sh, sh_argv);
+	_error(sh, 1);
+	_exit(errno);
+}
+
+
+/* error */
+static int _error(char const * message, int ret)
+{
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* public */
+/* functions */
 /* main */
 int main(void)
 {
-	const char shell[] = "/bin/sh";
-	char * const argv[] = { "sh", "-i", NULL };
-
-	open("/dev/console", O_RDONLY);
-	open("/dev/console", O_WRONLY);
-	open("/dev/console", O_WRONLY);
-	execv(shell, argv);
-	perror(shell);
-	return errno;
+	_oinit();
+	for(;;)
+		if(wait(NULL) == -1)
+		{
+			if(errno == ECHILD)
+				_oinit();
+			else
+				_error("wait", 1);
+		}
+	return 0;
 }
