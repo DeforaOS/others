@@ -1,5 +1,5 @@
 /* $Id$ */
-/* Copyright (c) 2006-2013 Pierre Pronchery <khorben@defora.org> */
+/* Copyright (c) 2006-2014 Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
 /* This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,6 +82,7 @@ static int _tar_error(char const * message, int ret)
 static int _tar_from_buffer(TarFileHeaderBuffer * tfhb, TarFileHeader * tfh)
 {
 	char * p;
+	size_t len;
 
 	_from_buffer_cpy(mode);
 	_from_buffer_cpy(uid);
@@ -90,14 +91,15 @@ static int _tar_from_buffer(TarFileHeaderBuffer * tfhb, TarFileHeader * tfh)
 	_from_buffer_cpy(mtime);
 	for(p = tfhb->filename; *p == '/'; p++);
 	/* FIXME ".." directory traversal */
-	memcpy(&tfh->filename, p, tfhb->filename+sizeof(tfhb->filename)-p);
-	tfh->filename[sizeof(tfh->filename)-1] = '\0';
-	if(tfh->filename[strlen(tfh->filename)] == '/')
+	memcpy(&tfh->filename, p, tfhb->filename + sizeof(tfhb->filename) - p);
+	tfh->filename[sizeof(tfh->filename) - 1] = '\0';
+	len = strlen(tfh->filename);
+	if(tfh->filename[len] == '/')
 		tfh->type = FT_DIRECTORY;
 	else
 		tfh->type = tfhb->type;
 	memcpy(&tfh->link, tfhb->link, sizeof(tfhb->link));
-	tfh->link[sizeof(tfh->link)-1] = '\0';
+	tfh->link[sizeof(tfh->link) - 1] = '\0';
 	return 0;
 }
 
@@ -147,7 +149,7 @@ static int _tar_seek(FILE * fp, char const * archive, size_t count)
 		{
 			if((step = count % TAR_BLKSIZ) == 0)
 				step = TAR_BLKSIZ;
-			if(fread(buf, sizeof(char), step, fp) != step)
+			if(fread(buf, sizeof(*buf), step, fp) != step)
 				return _tar_error(archive, 1);
 		}
 	else if(fseek(fp, count, SEEK_CUR) != 0)
@@ -189,9 +191,9 @@ static void _tar_stat_to_buffer(char const * filename, struct stat * st,
 	else if(S_ISBLK(st->st_mode))
 		tfhb->type = FT_BLOCK;
 	/* FIXME link */
-	p = (uint8_t*)tfhb;
+	p = (uint8_t *)tfhb;
 	for(i = 0; i < sizeof(*tfhb); i++)
-		checksum+=p[i];
+		checksum += p[i];
 	snprintf(tfhb->checksum, sizeof(tfhb->checksum), "%06o%c ", checksum,
 			'\0');
 }
@@ -217,7 +219,7 @@ static int _tar_create(Prefs * prefs, char const * archive, int filec,
 	for(i = 0; i < TAR_BLKSIZ * 2 && fputc('\0', fp) == '\0'; i++);
 	if(archive != NULL)
 		fclose(fp);
-	return i == TAR_BLKSIZ * 2 ? 0 : 1;
+	return (i == TAR_BLKSIZ * 2) ? 0 : 1;
 }
 
 static int _doc_header(Prefs * prefs, FILE * fp, char const * archive,
@@ -287,9 +289,9 @@ static int _doc_normal(FILE * fp, char const * archive, FILE * fp2,
 	size_t cnt;
 	char buf[BUFSIZ];
 
-	for(cnt = 0; (read = fread(buf, sizeof(char), sizeof(buf), fp2)) != 0;
-			cnt+=read)
-		if(fwrite(buf, sizeof(char), read, fp) != read)
+	for(cnt = 0; (read = fread(buf, sizeof(*buf), sizeof(buf), fp2)) != 0;
+			cnt += read)
+		if(fwrite(buf, sizeof(*buf), read, fp) != read)
 		{
 			ret = _tar_error(archive, 1);
 			break;
@@ -298,7 +300,7 @@ static int _doc_normal(FILE * fp, char const * archive, FILE * fp2,
 		return _tar_error(filename, 1);
 	for(cnt = TAR_BLKSIZ - (cnt % TAR_BLKSIZ);
 			cnt > 0 && fputc('\0', fp) == '\0'; cnt--);
-	return cnt == 0 ? 0 : _tar_error(archive, 1);
+	return (cnt == 0) ? 0 : _tar_error(archive, 1);
 }
 
 static int _extract_do(Prefs * prefs, FILE * fp, char const * archive,
@@ -387,10 +389,11 @@ static int _dox_normal(FILE * fp, char const * archive, TarFileHeader * fh)
 		return _tar_error(fh->filename, 1);
 	for(cnt = 0; cnt < fh->size; cnt += BUFSIZ)
 	{
-		read = fread(buf, sizeof(char), min(BUFSIZ, fh->size-cnt), fp);
+		read = fread(buf, sizeof(*buf), min(BUFSIZ, fh->size - cnt),
+				fp);
 		if(read == 0)
 			return _tar_error(archive, 1);
-		if(fwrite(buf, sizeof(char), read, fp2) != read)
+		if(fwrite(buf, sizeof(*buf), read, fp2) != read)
 		{
 			fclose(fp2);
 			return _tar_error(fh->filename, 1);
@@ -398,7 +401,7 @@ static int _dox_normal(FILE * fp, char const * archive, TarFileHeader * fh)
 	}
 	fclose(fp2);
 	if((cnt = fh->size % TAR_BLKSIZ) != 0
-			&& _tar_seek(fp, archive, TAR_BLKSIZ-cnt) != 0)
+			&& _tar_seek(fp, archive, TAR_BLKSIZ - cnt) != 0)
 		return 1;
 	return 0;
 }
@@ -492,12 +495,12 @@ static int _list_do(Prefs * prefs, FILE * fp, char const * archive,
 /* usage */
 static int _usage(void)
 {
-	fprintf(stderr, "%s", "Usage: tar -ctvx [-f archive][file...]\n\
+	fputs("Usage: tar -ctvx [-f archive][file...]\n\
   -c	Create an archive\n\
   -f	Specify an archive to work with (default: stdin or stdout)\n\
   -t	List the contents of an archive\n\
   -v	Verbose mode\n\
-  -x	Extract from archive\n");
+  -x	Extract from archive\n", stderr);
 	return 1;
 }
 
@@ -539,5 +542,6 @@ int main(int argc, char * argv[])
 		}
 	if(prefs == 0)
 		return _usage();
-	return _tar(&prefs, archive, argc - optind, &argv[optind]) == 0 ? 0 : 2;
+	return (_tar(&prefs, archive, argc - optind, &argv[optind]) == 0)
+		? 0 : 2;
 }
