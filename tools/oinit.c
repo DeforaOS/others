@@ -51,21 +51,19 @@ static int _oinit(void)
 
 static void _oinit_child(void)
 {
-	const char console[] = "/dev/console";
 	const char rc[] = "/etc/rc";
 	char * const rc_argv[] = { "rc", NULL };
 	const char sh[] = "/bin/sh";
 	char * const sh_argv[] = { "sh", "-i", NULL };
 
-	open(console, O_RDONLY);
-	open(console, O_WRONLY);
-	open(console, O_WRONLY);
 	if(setsid() == -1)
 		_error("setsid", 1);
 	else if(setpgid(0, 0) != 0)
 		_error("setpgid", 1);
+	/* start /etc/rc */
 	execve(rc, rc_argv, NULL);
 	_error(rc, 1);
+	/* start a backup shell */
 	execv(sh, sh_argv);
 	_error(sh, 1);
 	_exit(errno);
@@ -86,6 +84,15 @@ static int _error(char const * message, int ret)
 /* main */
 int main(void)
 {
+	const char console[] = "/dev/console";
+
+	if(getpid() == 1)
+	{
+		/* open stdin, stdout and stderr on the console */
+		open(console, O_RDONLY);
+		open(console, O_WRONLY);
+		open(console, O_WRONLY);
+	}
 	_oinit();
 	for(;;)
 		if(wait(NULL) == -1)
