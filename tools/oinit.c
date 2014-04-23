@@ -89,9 +89,12 @@ int main(void)
 	if(getpid() == 1)
 	{
 		/* open stdin, stdout and stderr on the console */
-		open(console, O_RDONLY);
-		open(console, O_WRONLY);
-		open(console, O_WRONLY);
+		if(open(console, O_RDONLY) != 0)
+			_error("stdin", 1);
+		if(open(console, O_WRONLY) != 1)
+			_error("stdout", 1);
+		if(open(console, O_WRONLY) != 2)
+			_error("stderr", 1);
 	}
 	_oinit();
 	for(;;)
