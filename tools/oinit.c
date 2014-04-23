@@ -42,6 +42,7 @@ static int _oinit(void)
 {
 	pid_t pid;
 
+	/* spawn a process to initialize the system */
 	if((pid = fork()) == -1)
 		return -_error("fork", 1);
 	else if(pid == 0)
@@ -101,8 +102,10 @@ int main(void)
 		if(wait(NULL) == -1)
 		{
 			if(errno == ECHILD)
+				/* restart init if there is no process left */
 				_oinit();
 			else
+				/* report the error */
 				_error("wait", 1);
 		}
 	return 0;
