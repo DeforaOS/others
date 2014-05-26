@@ -391,14 +391,17 @@ static int _mount_print(void)
 {
 #ifdef ST_WAIT
 	int cnt;
+	size_t s;
 	struct statvfs * f;
 	int i;
 
 	if((cnt = getvfsstat(NULL, 0, ST_WAIT)) < 0)
 		return _mount_error("getvfsstat", 1);
-	if((f = malloc(sizeof(*f) * cnt)) == NULL)
+	s = sizeof(*f) * cnt;
+	if((f = malloc(s)) == NULL)
 		return _mount_error("malloc", 1);
-	if(getvfsstat(f, sizeof(*f) * cnt, ST_WAIT) != cnt)
+	/* XXX race condition (the result of getvfsstat() may be different) */
+	if((cnt = getvfsstat(f, s, ST_WAIT)) < 0)
 	{
 		free(f);
 		return _mount_error("getvfsstat", 1);
