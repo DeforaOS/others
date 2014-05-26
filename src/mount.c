@@ -494,6 +494,7 @@ static int _mount_do_mount(char const * type, int flags, char const * special,
 			if(stat(node, &st) == 0)
 				return -_mount_error(special, 1);
 			return -_mount_error(node, 1);
+		case ENODEV:
 		case ENXIO:
 			return -_mount_error(special, 1);
 		default:
