@@ -422,9 +422,12 @@ static int _mount_print(void)
 	char buf[256];
 
 	if((fp = fopen(file, "r")) == NULL)
+	{
+		_mount_error(file, 1);
 		file = mounts;
-	if((fp = fopen(file, "r")) == NULL)
-		return -_mount_error(file, 1);
+		if((fp = fopen(file, "r")) == NULL)
+			return -_mount_error(file, 1);
+	}
 	while((res = fread(buf, 1, sizeof(buf), fp)) > 0)
 		fwrite(buf, 1, res, stdout);
 	if(!feof(fp))
