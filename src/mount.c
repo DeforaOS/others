@@ -465,8 +465,8 @@ static int _mount_do(Prefs * prefs, char const * special, char const * node)
 			return _mount_supported[i].callback(
 					_mount_supported[i].type, flags,
 					special, node);
-	errno = ENOTSUP;
-	return -_mount_error(prefs->type, 1);
+	/* generic fallback */
+	return _mount_callback_generic(prefs->type, flags, special, node);
 }
 
 static int _mount_do_mount(char const * type, int flags, char const * special,
@@ -629,8 +629,10 @@ static int _mount_callback_ffs(char const * type, int flags,
 static int _mount_callback_generic(char const * type, int flags,
 		char const * special, char const * node)
 {
-	int ret;
-	void * data;
+	struct
+	{
+		char const * fspec;
+	} data;
 
 	if(node == NULL)
 	{
@@ -639,12 +641,9 @@ static int _mount_callback_generic(char const * type, int flags,
 	}
 	if(special == NULL)
 		return -_mount_all(NULL, node);
-	if((data = strdup(special)) == NULL)
-		return -_mount_error(special, 1);
-	ret = _mount_do_mount(type, flags, special, node, data,
+	data.fspec = special;
+	return _mount_do_mount(type, flags, special, node, &data,
 			sizeof(special));
-	free(data);
-	return ret;
 }
 
 #ifdef MT_HFS
