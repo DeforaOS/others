@@ -106,7 +106,65 @@ typedef struct _Prefs
 #define PREFS_u	0x4
 
 
-/* variables */
+/* prototypes */
+#ifdef MT_ADOSFS
+static int _mount_callback_adosfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_EXT2FS
+static int _mount_callback_ext2fs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_FAT
+static int _mount_callback_fat(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_FFS
+static int _mount_callback_ffs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+static int _mount_callback_generic(char const * type, int flags,
+		char const * special, char const * node);
+#ifdef MT_HFS
+static int _mount_callback_hfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_ISO9660
+static int _mount_callback_iso9660(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_MFS
+static int _mount_callback_mfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_NFS
+static int _mount_callback_nfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_NTFS
+static int _mount_callback_ntfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_NULLFS
+static int _mount_callback_nullfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_PROCFS
+static int _mount_callback_procfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_TMPFS
+static int _mount_callback_tmpfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+#ifdef MT_UNIONFS
+static int _mount_callback_unionfs(char const * type, int flags,
+		char const * special, char const * node);
+#endif
+
+
+/* constants */
+/* options */
 static const struct
 {
 	size_t len;
@@ -187,66 +245,8 @@ static const struct
 	{ 0,	NULL,		0		}
 };
 
-
-/* prototypes */
-#ifdef MT_ADOSFS
-static int _mount_callback_adosfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_EXT2FS
-static int _mount_callback_ext2fs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_FAT
-static int _mount_callback_fat(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_FFS
-static int _mount_callback_ffs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-static int _mount_callback_generic(char const * type, int flags,
-		char const * special, char const * node);
-#ifdef MT_HFS
-static int _mount_callback_hfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_ISO9660
-static int _mount_callback_iso9660(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_MFS
-static int _mount_callback_mfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_NFS
-static int _mount_callback_nfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_NTFS
-static int _mount_callback_ntfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_NULLFS
-static int _mount_callback_nullfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_PROCFS
-static int _mount_callback_procfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_TMPFS
-static int _mount_callback_tmpfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-#ifdef MT_UNIONFS
-static int _mount_callback_unionfs(char const * type, int flags,
-		char const * special, char const * node);
-#endif
-
-
-/* variables */
-static struct
+/* filesystems supported */
+static const struct
 {
 	char * name;
 	char * type;
