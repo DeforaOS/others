@@ -178,6 +178,12 @@ static const struct
 	{ 4,	"sync",		-MNT_ASYNC	},
 # endif
 #endif
+#ifdef MNT_LOCAL
+	{ 5,	"local",	MNT_LOCAL	},
+#endif
+#ifdef MNT_LOG
+	{ 3,	"log",		MNT_LOG		},
+#endif
 #ifdef MNT_NOATIME
 	{ 5,	"atime",	-MNT_NOATIME	},
 	{ 7,	"noatime",	MNT_NOATIME	},
@@ -225,6 +231,12 @@ static const struct
 #ifdef MS_RDONLY
 	{ 2,	"ro",		MS_RDONLY	},
 	{ 2,	"rw",		-MS_RDONLY	},
+#endif
+#ifdef MNT_ROOTFS
+	{ 4,	"root",		MNT_ROOTFS	},
+#endif
+#ifdef MNT_SOFTDEP
+	{ 7,	"softdep",	MNT_SOFTDEP	},
 #endif
 #ifdef MNT_SYNCHRONOUS
 # ifndef MNT_ASYNC
