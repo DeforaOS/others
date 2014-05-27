@@ -387,9 +387,11 @@ static int _mount_all(Prefs * prefs, char const * node)
 	return ret;
 }
 
+#ifdef ST_WAIT
+static void _mount_print_flags(unsigned long flags);
+
 static int _mount_print(void)
 {
-#ifdef ST_WAIT
 	int cnt;
 	size_t s;
 	struct statvfs * f;
@@ -407,12 +409,40 @@ static int _mount_print(void)
 		return _mount_error("getvfsstat", 1);
 	}
 	for(i = 0; i < cnt; i++)
-		printf("%s%s%s%s%s%s%lx%s", f[i].f_mntfromname, " on ",
+	{
+		printf("%s%s%s%s%s%s", f[i].f_mntfromname, " on ",
 				f[i].f_mntonname, " type ", f[i].f_fstypename,
-				" (", f[i].f_flag, ")\n");
+				" (");
+		_mount_print_flags(f[i].f_flag);
+		printf("%s\n", ")");
+	}
 	free(f);
 	return 0;
+}
+
+static void _mount_print_flags(unsigned long flags)
+{
+	size_t i;
+	char const * sep = "";
+
+	for(i = 0; i < sizeof(_mount_options) / sizeof(*_mount_options); i++)
+	{
+		if(_mount_options[i].flags <= 0)
+			continue;
+		if((flags & _mount_options[i].flags)
+				== (unsigned)_mount_options[i].flags)
+		{
+			printf("%s%s", sep, _mount_options[i].name);
+			sep = ",";
+			flags -= _mount_options[i].flags;
+		}
+	}
+	if(flags != 0)
+		printf("%s%lx", sep, flags);
+}
 #else /* workaround when getvfsstat() is missing */
+static int _mount_print(void)
+{
 	int ret = 0;
 	FILE * fp;
 	const char mtab[] = "/etc/mtab";
@@ -435,8 +465,8 @@ static int _mount_print(void)
 	if(fclose(fp) != 0)
 		ret = -_mount_error(file, 1);
 	return ret;
-#endif
 }
+#endif
 
 static int _mount_do(Prefs * prefs, char const * special, char const * node)
 {
