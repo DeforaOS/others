@@ -18,6 +18,21 @@
 #include "otherbox.h"
 
 
+/* chroot.c */
+#define main _chroot_main
+#define _usage _chroot_usage
+#define _Prefs _chroot_Prefs
+#define Prefs chroot_Prefs
+#define _prefs_parse _chroot_prefs_parse
+#define _chroot __chroot
+#include "../src/chroot.c"
+#undef main
+#undef _usage
+#undef _Prefs
+#undef Prefs
+#undef _prefs_parse
+#undef _chroot
+
 /* clear.c */
 #define main _clear_main
 #define _usage _clear_usage
@@ -247,6 +262,7 @@
 Call calls[] =
 {
 
+	{ "chroot",	_chroot_main	},
 	{ "clear",	_clear_main	},
 	{ "halt",	_halt_main	},
 	{ "hexdump",	_hexdump_main	},
