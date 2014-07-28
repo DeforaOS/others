@@ -1,4 +1,4 @@
-TARGETS	= clear halt hexdump host hostname ifconfig login mktemp mount poweroff reboot tar umount uptime w
+TARGETS	= chroot clear halt hexdump host hostname ifconfig login mktemp mount poweroff reboot tar umount uptime w
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -15,6 +15,13 @@ INSTALL	= install
 
 
 all: $(TARGETS)
+
+chroot_OBJS = chroot.o
+chroot_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+chroot_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+chroot: $(chroot_OBJS)
+	$(CC) -o chroot $(chroot_OBJS) $(chroot_LDFLAGS)
 
 clear_OBJS = clear.o
 clear_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
@@ -121,6 +128,9 @@ w_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 w: $(w_OBJS)
 	$(CC) -o w $(w_OBJS) $(w_LDFLAGS)
 
+chroot.o: chroot.c
+	$(CC) $(chroot_CFLAGS) -c chroot.c
+
 clear.o: clear.c
 	$(CC) $(clear_CFLAGS) -c clear.c
 
@@ -167,12 +177,14 @@ w.o: w.c utmpx.c
 	$(CC) $(w_CFLAGS) -c w.c
 
 clean:
-	$(RM) -- $(clear_OBJS) $(halt_OBJS) $(hexdump_OBJS) $(host_OBJS) $(hostname_OBJS) $(ifconfig_OBJS) $(login_OBJS) $(mktemp_OBJS) $(mount_OBJS) $(poweroff_OBJS) $(reboot_OBJS) $(tar_OBJS) $(umount_OBJS) $(uptime_OBJS) $(w_OBJS)
+	$(RM) -- $(chroot_OBJS) $(clear_OBJS) $(halt_OBJS) $(hexdump_OBJS) $(host_OBJS) $(hostname_OBJS) $(ifconfig_OBJS) $(login_OBJS) $(mktemp_OBJS) $(mount_OBJS) $(poweroff_OBJS) $(reboot_OBJS) $(tar_OBJS) $(umount_OBJS) $(uptime_OBJS) $(w_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)
 
 install: $(TARGETS)
+	$(MKDIR) $(DESTDIR)$(SBINDIR)
+	$(INSTALL) -m 0755 chroot $(DESTDIR)$(SBINDIR)/chroot
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 clear $(DESTDIR)$(BINDIR)/clear
 	$(MKDIR) $(DESTDIR)$(BINDIR)
@@ -205,6 +217,7 @@ install: $(TARGETS)
 	$(INSTALL) -m 0755 w $(DESTDIR)$(BINDIR)/w
 
 uninstall:
+	$(RM) -- $(DESTDIR)$(SBINDIR)/chroot
 	$(RM) -- $(DESTDIR)$(BINDIR)/clear
 	$(RM) -- $(DESTDIR)$(BINDIR)/halt
 	$(RM) -- $(DESTDIR)$(BINDIR)/hexdump
