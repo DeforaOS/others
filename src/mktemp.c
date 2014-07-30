@@ -21,60 +21,85 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef PROGNAME
+# define PROGNAME "mktemp"
+#endif
+
 
 /* mktemp */
-static int _mktemp_error(char * message, int ret);
-static int _mktemp(char * template)
+/* private */
+/* prototypes */
+static int _mktemp(char const * template);
+
+static int _mktemp_error(char const * message, int ret);
+static int _mktemp_usage(void);
+
+
+/* functions */
+/* mktemp */
+static int _mktemp(char const * template)
 {
+	int ret = 0;
+	char * t;
 	int fd;
 	struct timeval tv;
 
-	if((template = strdup(template)) == NULL)
+	if((t = strdup(template)) == NULL)
 		return _mktemp_error("strdup", 1);
 	if(gettimeofday(&tv, NULL) != 0)
+	{
+		free(t);
 		return _mktemp_error("gettimeofday", 1);
+	}
 	srand(tv.tv_sec ^ tv.tv_usec ^ getuid() ^ (getpid() << 16));
-	if((fd = mkstemp(template)) == -1)
-		return _mktemp_error(template, 1);
-	if(close(fd) != 0)
-		return _mktemp_error(template, 1);
-	printf("%s\n", template);
-	free(template);
-	return 0;
+	if((fd = mkstemp(t)) == -1
+			|| close(fd) != 0)
+	{
+		ret = _mktemp_error(t, 1);
+		free(t);
+		return ret;
+	}
+	printf("%s\n", t);
+	free(t);
+	return ret;
 }
 
-static int _mktemp_error(char * message, int ret)
+
+/* mktemp_error */
+static int _mktemp_error(char const * message, int ret)
 {
-	fputs("mktemp: ", stderr);
+	fputs(PROGNAME ": ", stderr);
 	perror(message);
 	return ret;
 }
 
 
-/* usage */
-static int _usage(void)
+/* mktemp_usage */
+static int _mktemp_usage(void)
 {
-	fputs("Usage: mktemp [-d] [template]\n\
+	fputs("Usage: " PROGNAME " [-d] [template]\n\
   -d	make a directory instead of a file\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
 	int o;
-	char * template = "/tmp/tmp.XXXXXX";
+	char const * template = "/tmp/tmp.XXXXXX";
 
 	while((o = getopt(argc, argv, "")) != -1)
 		switch(o)
 		{
 			case '?':
-				return _usage();
+				return _mktemp_usage();
 		}
-	if(optind < argc - 1)
-		return _usage();
-	if(optind == argc - 1)
+	if(optind + 1 < argc)
+		return _mktemp_usage();
+	if(optind + 1 == argc)
 		return _mktemp(argv[optind]);
-	return _mktemp(template) == 0 ? 0 : 2;
+	return (_mktemp(template) == 0) ? 0 : 2;
 }
