@@ -19,10 +19,22 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef PROGNAME
+# define PROGNAME "hostname"
+#endif
+
 
 /* hostname */
-static int _hostname_error(char const * message, int ret);
+/* private */
+/* prototypes */
+static int _hostname(char const * name);
 
+static int _hostname_error(char const * message, int ret);
+static int _hostname_usage(void);
+
+
+/* functions */
+/* hostname */
 static int _hostname(char const * name)
 {
 	char buf[128];
@@ -43,20 +55,22 @@ static int _hostname(char const * name)
 /* hostname_error */
 static int _hostname_error(char const * message, int ret)
 {
-	fputs("hostname: ", stderr);
+	fputs(PROGNAME ": ", stderr);
 	perror(message);
 	return ret;
 }
 
 
-/* usage */
-static int _usage(void)
+/* hostname_usage */
+static int _hostname_usage(void)
 {
-	fputs("Usage: hostname [name]\n", stderr);
+	fputs("Usage: " PROGNAME " [name]\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
@@ -67,11 +81,11 @@ int main(int argc, char * argv[])
 		switch(o)
 		{
 			default:
-				return _usage();
+				return _hostname_usage();
 		}
 	if(optind + 1 == argc)
 		name = argv[optind];
 	else if(optind != argc)
-		return _usage();
+		return _hostname_usage();
 	return (_hostname(name) == 0) ? 0 : 2;
 }
