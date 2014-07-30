@@ -16,6 +16,7 @@
 
 
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 #ifndef PROGNAME
@@ -35,10 +36,13 @@ static int _chroot_usage(void);
 /* chroot */
 static int _chroot(char const * pathname)
 {
+	char const * shell;
+
 	if(chroot(pathname) != 0)
 		return _chroot_error(pathname, 2);
-	/* FIXME use the proper shell */
-	execl("/bin/sh", "/bin/sh", NULL);
+	if((shell = getenv("SHELL")) == NULL)
+		shell = "/bin/sh";
+	execl(shell, shell, NULL);
 	return 0;
 }
 
