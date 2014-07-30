@@ -20,8 +20,20 @@
 #include <stdio.h>
 #include <errno.h>
 
+#ifndef PROGNAME
+# define PROGNAME "poweroff"
+#endif
+
 
 /* poweroff */
+/* private */
+/* prototypes */
+static int _poweroff(void);
+
+static int _poweroff_error(char const * message, int ret);
+static int _poweroff_usage(void);
+
+
 /* functions */
 /* poweroff */
 static int _poweroff(void)
@@ -39,30 +51,38 @@ static int _poweroff(void)
 # warning Unsupported platform
 	errno = ENOSYS;
 #endif
-	{
-		perror("poweroff");
-		return 1;
-	}
+		return _poweroff_error(NULL, 1);
 	return 0;
 }
 
 
-/* usage */
-static int _usage(void)
+/* poweroff_error */
+static int _poweroff_error(char const * message, int ret)
 {
-	fputs("Usage: poweroff\n", stderr);
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* poweroff_usage */
+static int _poweroff_usage(void)
+{
+	fputs("Usage: " PROGNAME "\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
 	int o;
 
 	while((o = getopt(argc, argv, "")) != -1)
-		return _usage();
+		return _poweroff_usage();
 	if(optind != argc)
-		return _usage();
-	return _poweroff() ? 0 : 2;
+		return _poweroff_usage();
+	return (_poweroff() == 0) ? 0 : 2;
 }
