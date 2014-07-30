@@ -21,12 +21,24 @@
 #include <stdio.h>
 #include <time.h>
 
+#ifndef PROGNAME
+# define PROGNAME "uptime"
+#endif
+
 #include "utmpx.c"
 
 
 /* uptime */
-static int _uptime_error(char const * message, int ret);
+/* private */
+/* prototypes */
+static int _uptime(void);
 
+static int _uptime_error(char const * message, int ret);
+static int _uptime_usage(void);
+
+
+/* functions */
+/* uptime */
 static int _uptime(void)
 {
 	struct timeval tv;
@@ -61,30 +73,34 @@ static int _uptime(void)
 	return 0;
 }
 
+
+/* uptime_error */
 static int _uptime_error(char const * message, int ret)
 {
-	fputs("uptime: ", stderr);
+	fputs(PROGNAME ": ", stderr);
 	perror(message);
 	return ret;
 }
 
 
-/* usage */
-static int _usage(void)
+/* uptime_usage */
+static int _uptime_usage(void)
 {
-	fputs("Usage: uptime\n", stderr);
+	fputs("Usage: " PROGNAME "\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
 	int o;
 
 	while((o = getopt(argc, argv, "")) != -1)
-		return _usage();
+		return _uptime_usage();
 	if(argc != 1)
-		return _usage();
-	return _uptime() == 0 ? 0 : 2;
+		return _uptime_usage();
+	return (_uptime() == 0) ? 0 : 2;
 }
