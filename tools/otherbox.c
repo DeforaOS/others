@@ -22,27 +22,45 @@
 #include <libgen.h>
 #include "otherbox.h"
 
+#ifndef PROGNAME
+# define PROGNAME "otherbox"
+#endif
+
 
 /* otherbox */
 /* private */
 /* prototypes */
-static int _error(char const * message, int ret);
-static int _list(Call * calls);
-static int _usage(void);
+static int _otherbox(char const * name, int argc, char * argv[]);
+
+static int _otherbox_error(char const * message, int ret);
+static int _otherbox_list(Call * calls);
+static int _otherbox_usage(void);
 
 
 /* functions */
-/* error */
-static int _error(char const * message, int ret)
+/* otherbox */
+static int _otherbox(char const * name, int argc, char * argv[])
 {
-	fputs("otherbox: ", stderr);
+	size_t i;
+
+	for(i = 0; calls[i].name != NULL; i++)
+		if(strcmp(calls[i].name, name) == 0)
+			return calls[i].call(argc, argv);
+	return -1;
+}
+
+
+/* otherbox_error */
+static int _otherbox_error(char const * message, int ret)
+{
+	fputs(PROGNAME ": ", stderr);
 	perror(message);
 	return ret;
 }
 
 
-/* list */
-static int _list(Call * calls)
+/* otherbox_list */
+static int _otherbox_list(Call * calls)
 {
 	size_t i;
 
@@ -52,11 +70,11 @@ static int _list(Call * calls)
 }
 
 
-/* usage */
-static int _usage(void)
+/* otherbox_usage */
+static int _otherbox_usage(void)
 {
-	fputs("Usage: otherbox program [arguments...]\n"
-"       otherbox -l\n"
+	fputs("Usage: " PROGNAME " program [arguments...]\n"
+"       " PROGNAME " -l\n"
 "  -l	List available programs\n", stderr);
 	return 1;
 }
@@ -67,33 +85,27 @@ static int _usage(void)
 /* main */
 int main(int argc, char * argv[])
 {
+	int ret;
 	char * p;
 	char const * q;
-	size_t i;
 	int o;
 
 	if((p = strdup(argv[0])) == NULL)
-		return _error(NULL, 2);
+		return _otherbox_error(NULL, 2);
 	q = basename(p);
-	for(i = 0; calls[i].name != NULL; i++)
-		if(strcmp(calls[i].name, q) == 0)
-		{
-			free(p);
-			return calls[i].call(argc, argv);
-		}
+	ret = _otherbox(q, argc, argv);
 	free(p);
+	if(ret >= 0)
+		return ret;
 	while((o = getopt(argc, argv, "l")) != -1)
 		switch(o)
 		{
 			case 'l':
-				return _list(calls);
+				return _otherbox_list(calls);
 			default:
-				return _usage();
+				return _otherbox_usage();
 		}
 	if(optind == argc)
-		return _usage();
-	for(i = 0; calls[i].name != NULL; i++)
-		if(strcmp(calls[i].name, argv[optind]) == 0)
-			return calls[i].call(argc - optind, &argv[optind]);
-	return 0;
+		return _otherbox_usage();
+	return _otherbox(argv[optind], argc - optind, &argv[optind]);
 }
