@@ -20,8 +20,17 @@
 #include <stdio.h>
 #include <errno.h>
 
+#ifndef PROGNAME
+# define PROGNAME "halt"
+#endif
+
 
 /* halt */
+/* private */
+/* prototypes */
+static int _halt(void);
+
+
 /* functions */
 /* halt */
 static int _halt(void)
@@ -46,29 +55,31 @@ static int _halt(void)
 	errno = ENOSYS;
 #endif
 	{
-		perror("halt");
+		perror(PROGNAME);
 		return 1;
 	}
 	return 0;
 }
 
 
-/* usage */
-static int _usage(void)
+/* halt_usage */
+static int _halt_usage(void)
 {
-	fputs("Usage: halt\n", stderr);
+	fputs("Usage: " PROGNAME "\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
 	int o;
 
 	while((o = getopt(argc, argv, "")) != -1)
-		return _usage();
+		return _halt_usage();
 	if(optind != argc)
-		return _usage();
+		return _halt_usage();
 	return _halt() ? 0 : 2;
 }
