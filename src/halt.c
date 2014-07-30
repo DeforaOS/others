@@ -30,6 +30,9 @@
 /* prototypes */
 static int _halt(void);
 
+static int _halt_error(char const * message, int ret);
+static int _halt_usage(void);
+
 
 /* functions */
 /* halt */
@@ -43,7 +46,7 @@ static int _halt(void)
 #elif defined(RB_POWEROFF) /* FreeBSD */
 	if(reboot(RB_HALT) != 0)
 #elif defined(RB_HALT)
-# if defined(__APPLE__) /* MacOS X */
+# if defined(__APPLE__) /* Darwin */
 	if(reboot(RB_HALT) != 0)
 # elif defined(__OpenBSD__) /* OpenBSD */
 	if(reboot(RB_HALT) != 0)
@@ -54,11 +57,17 @@ static int _halt(void)
 # warning Unsupported platform
 	errno = ENOSYS;
 #endif
-	{
-		perror(PROGNAME);
-		return 1;
-	}
+		return _halt_error(NULL, 1);
 	return 0;
+}
+
+
+/* halt_error */
+static int _halt_error(char const * message, int ret)
+{
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
 }
 
 
