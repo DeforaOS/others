@@ -22,11 +22,23 @@
 #include <time.h>
 #include <stdio.h>
 
+#ifndef PROGNAME
+# define PROGNAME "w"
+#endif
+
 #include "utmpx.c"
 
 
 /* w */
+/* private */
+/* prototypes */
+static int _w(void);
 static int _w_error(char * message, int ret);
+static int _w_usage(void);
+
+
+/* functions */
+/* w */
 static int _print_idle(struct timeval * tv, char * device);
 static int _print_what(pid_t pid);
 
@@ -56,13 +68,6 @@ static int _w(void)
 # warning Unsupported platform: USER_PROCESS is not supported
 #endif
 	return 0;
-}
-
-static int _w_error(char * message, int ret)
-{
-	fputs("w: ", stderr);
-	perror(message);
-	return ret;
 }
 
 static int _print_idle(struct timeval * tv, char * device)
@@ -112,20 +117,33 @@ static int _print_what(pid_t pid)
 }
 
 
-/* usage */
-static int _usage(void)
+/* w_error */
+static int _w_error(char * message, int ret)
 {
-	fputs("Usage: w\n", stderr);
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* w_usage */
+static int _w_usage(void)
+{
+	fputs("Usage: " PROGNAME "\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
 	int o;
 
 	while((o = getopt(argc, argv, "")) != -1)
-		return _usage();
-	return _w() == 0 ? 0 : 2;
+		return _w_usage();
+	if(optind != argc)
+		return _w_usage();
+	return (_w() == 0) ? 0 : 2;
 }
