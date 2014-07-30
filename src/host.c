@@ -53,8 +53,22 @@ static int _host(char * hostname)
 /* herror */
 static int _host_herror(char const * message, int ret)
 {
-	fputs(PROGNAME ": ", stderr);
-	herror(message);
+	struct
+	{
+		int error;
+		char const * message;
+	} em[] = {
+		{ HOST_NOT_FOUND,	"Host not found"	},
+		{ NO_DATA,		"No data"		},
+		{ NO_RECOVERY,		"No recovery"		},
+		{ TRY_AGAIN,		"Try again"		},
+		{ 0,			"Unknown error"		}
+	};
+	int i;
+
+	fprintf(stderr, "%s%s%s", PROGNAME ": ", message, ": ");
+	for(i = 0; em[i].error != 0 && em[i].error != h_errno; i++);
+	fprintf(stderr, "%s\n", em[i].message);
 	return ret;
 }
 
