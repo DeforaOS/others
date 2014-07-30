@@ -24,6 +24,15 @@
 
 
 /* clear */
+/* private */
+/* prototypes */
+static int _clear(void);
+
+static int _clear_usage(void);
+
+
+/* functions */
+/* clear */
 static int _clear(void)
 {
 	printf("%c[2J%c[f", 0x1b, 0x1b);
@@ -39,6 +48,8 @@ static int _clear_usage(void)
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
