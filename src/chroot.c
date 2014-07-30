@@ -27,8 +27,8 @@
 /* prototypes */
 static int _chroot(char const * pathname);
 
-static int _error(char const * message, int ret);
-static int _usage(void);
+static int _chroot_error(char const * message, int ret);
+static int _chroot_usage(void);
 
 
 /* functions */
@@ -36,15 +36,15 @@ static int _usage(void);
 static int _chroot(char const * pathname)
 {
 	if(chroot(pathname) != 0)
-		return _error(pathname, 2);
+		return _chroot_error(pathname, 2);
 	/* FIXME use the proper shell */
 	execl("/bin/sh", "/bin/sh", NULL);
 	return 0;
 }
 
 
-/* error */
-static int _error(char const * message, int ret)
+/* chroot_error */
+static int _chroot_error(char const * message, int ret)
 {
 	fputs(PROGNAME ": ", stderr);
 	perror(message);
@@ -52,8 +52,8 @@ static int _error(char const * message, int ret)
 }
 
 
-/* usage */
-static int _usage(void)
+/* chroot_usage */
+static int _chroot_usage(void)
 {
 	fputs("Usage: " PROGNAME " path\n", stderr);
 	return 1;
@@ -68,8 +68,8 @@ int main(int argc, char * argv[])
 	int o;
 
 	while((o = getopt(argc, argv, "")) != -1)
-		return _usage();
+		return _chroot_usage();
 	if(argc - optind != 1)
-		return _usage();
+		return _chroot_usage();
 	return (_chroot(argv[optind]) == 0) ? 0 : 2;
 }
