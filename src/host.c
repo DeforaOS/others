@@ -19,6 +19,10 @@
 #include <stdio.h>
 #include <netdb.h>
 
+#ifndef PROGNAME
+# define PROGNAME "host"
+#endif
+
 
 /* host */
 static int _host_herror(char const * message, int ret);
@@ -54,17 +58,17 @@ static int _host_herror(char const * message, int ret)
 	};
 	int i;
 
-	fprintf(stderr, "%s%s%s", "host: ", message, ": ");
+	fprintf(stderr, "%s%s%s", PROGNAME ": ", message, ": ");
 	for(i = 0; em[i].error != 0 && em[i].error != h_errno; i++);
 	fprintf(stderr, "%s\n", em[i].message);
 	return ret;
 }
 
 
-/* usage */
-static int _usage(void)
+/* host_usage */
+static int _host_usage(void)
 {
-	fputs("Usage: host address\n", stderr);
+	fputs("Usage: " PROGNAME " address\n", stderr);
 	return 1;
 }
 
@@ -78,9 +82,9 @@ int main(int argc, char * argv[])
 		switch(o)
 		{
 			default:
-				return _usage();
+				return _host_usage();
 		}
 	if(optind != argc - 1)
-		return _usage();
-	return _host(argv[optind]) == 0 ? 0 : 2;
+		return _host_usage();
+	return (_host(argv[optind]) == 0) ? 0 : 2;
 }
