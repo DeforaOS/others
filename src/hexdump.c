@@ -96,7 +96,7 @@ static int _hexdump_error(char const * message, int ret)
 /* hexdump_usage */
 static int _hexdump_usage(void)
 {
-	fputs("Usage: " PROGNAME " file...\n", stderr);
+	fputs("Usage: " PROGNAME " file\n", stderr);
 	return 1;
 }
 
@@ -114,7 +114,7 @@ int main(int argc, char * argv[])
 			default:
 				return _hexdump_usage();
 		}
-	if(optind == argc)
+	if(optind + 1 != argc)
 		return _hexdump_usage();
 	return (_hexdump(argc - optind, &argv[optind]) == 0) ? 0 : 2;
 }
