@@ -74,6 +74,10 @@
 #include <string.h>
 #include <errno.h>
 
+#ifndef PROGNAME
+# define PROGNAME "mount"
+#endif
+
 /* portability */
 #ifndef MT_ISO9660
 # define MT_ISO9660	"iso9660"
@@ -94,6 +98,7 @@ struct procfs_args
 
 
 /* mount */
+/* private */
 /* types */
 typedef struct _Prefs
 {
@@ -312,6 +317,13 @@ static const struct
 };
 
 
+/* prototypes */
+static int _mount(Prefs * prefs, char const * special, char const * node);
+
+static int _mount_error(char const * message, int ret);
+static int _mount_usage(void);
+
+
 /* functions */
 /* mount */
 static int _mount_all(Prefs * prefs, char const * node);
@@ -327,13 +339,6 @@ static int _mount(Prefs * prefs, char const * special, char const * node)
 		return (prefs != NULL && (prefs->flags & PREFS_a) == PREFS_a)
 			? _mount_all(prefs, NULL) : _mount_print();
 	return _mount_do(prefs, special, node);
-}
-
-static int _mount_error(char const * message, int ret)
-{
-	fputs("mount: ", stderr);
-	perror(message);
-	return ret;
 }
 
 static int _mount_all(Prefs * prefs, char const * node)
@@ -528,7 +533,7 @@ static int _mount_do_mount(char const * type, int flags, char const * special,
 # else
 	if(mount(type, node, flags, data) == 0)
 # endif
-#elif defined(__APPLE__) || defined(__FreeBSD__) /* FreeBSD */
+#elif defined(__APPLE__) || defined(__FreeBSD__) /* Darwin, FreeBSD */
 	if(mount(type, node, flags, data) == 0)
 #else
 	struct { char const * fspec; } * d = data;
@@ -885,15 +890,24 @@ static int _mount_callback_unionfs(char const * type, int flags,
 #endif
 
 
-/* usage */
-static int _usage(void)
+/* mount_error */
+static int _mount_error(char const * message, int ret)
+{
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* mount_usage */
+static int _mount_usage(void)
 {
 	size_t i;
 	char const * sep = "";
 
-	fputs("Usage: mount [-a][-t type]\n"
-"       mount [-f] special | node\n"
-"       mount [-f][-u][-o options] special node\n", stderr);
+	fputs("Usage: " PROGNAME " [-a][-t type]\n"
+"       " PROGNAME " [-f] special | node\n"
+"       " PROGNAME " [-f][-u][-o options] special node\n", stderr);
 	fputs("\nFilesystems supported:\n", stderr);
 	for(i = 0; _mount_supported[i].name != NULL; i++)
 	{
@@ -913,6 +927,8 @@ static int _usage(void)
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
@@ -941,13 +957,13 @@ int main(int argc, char * argv[])
 				prefs.flags |= PREFS_u;
 				break;
 			default:
-				return _usage();
+				return _mount_usage();
 		}
 	if(optind + 2 == argc)
 		special = argv[optind++];
 	if(optind + 1 == argc)
 		node = argv[optind];
 	else if(optind != argc)
-		return _usage();
+		return _mount_usage();
 	return (_mount(&prefs, special, node) == 0) ? 0 : 2;
 }
