@@ -18,6 +18,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#ifndef PROGNAME
+# define PROGNAME "clear"
+#endif
+
 
 /* clear */
 static int _clear(void)
@@ -27,10 +31,10 @@ static int _clear(void)
 }
 
 
-/* usage */
-static int _usage(void)
+/* clear_usage */
+static int _clear_usage(void)
 {
-	fputs("Usage: clear\n", stderr);
+	fputs("Usage: " PROGNAME "\n", stderr);
 	return 1;
 }
 
@@ -41,8 +45,8 @@ int main(int argc, char * argv[])
 	int o;
 
 	while((o = getopt(argc, argv, "")) != -1)
-		return _usage();
+		return _clear_usage();
 	if(argc != 1)
-		return _usage();
+		return _clear_usage();
 	return (_clear() == 0) ? 0 : 2;
 }
