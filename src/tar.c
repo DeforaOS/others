@@ -29,15 +29,16 @@
 #include <string.h>
 #include "tar.h"
 
+#ifndef PROGNAME
+# define PROGNAME "tar"
+#endif
 #ifndef min
 # define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
 
 
-/* constants */
-#define TAR_BLKSIZ 512
-
-
+/* tar */
+/* private */
 /* types */
 typedef int Prefs;
 #define PREFS_A  0x01
@@ -48,8 +49,20 @@ typedef int Prefs;
 #define PREFS_x  0x20
 
 
-/* tar */
+/* constants */
+#define TAR_BLKSIZ 512
+
+
+/* prototypes */
+static int _tar(Prefs * prefs, char const * archive, int filec,
+		char * filev[]);
+
 static int _tar_error(char const * message, int ret);
+static int _tar_usage(void);
+
+
+/* functions */
+/* tar */
 static int _tar_create(Prefs * prefs, char const * archive, int filec,
 		char * filev[]);
 static int _tar_extract(Prefs * prefs, char const * archive, int filec,
@@ -67,13 +80,6 @@ static int _tar(Prefs * prefs, char const * archive, int filec,
 	if(*prefs & PREFS_x)
 		return _tar_extract(prefs, archive, filec, filev);
 	return 1;
-}
-
-static int _tar_error(char const * message, int ret)
-{
-	fputs("tar: ", stderr);
-	perror(message);
-	return ret;
 }
 
 #define _from_buffer_cpy(a) tfhb->a[sizeof(tfhb->a)-1] = '\0'; \
@@ -492,10 +498,19 @@ static int _list_do(Prefs * prefs, FILE * fp, char const * archive,
 }
 
 
-/* usage */
-static int _usage(void)
+/* tar_error */
+static int _tar_error(char const * message, int ret)
 {
-	fputs("Usage: tar -ctvx [-f archive][file...]\n\
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* tar_usage */
+static int _tar_usage(void)
+{
+	fputs("Usage: " PROGNAME " -ctvx [-f archive][file...]\n\
   -c	Create an archive\n\
   -f	Specify an archive to work with (default: stdin or stdout)\n\
   -t	List the contents of an archive\n\
@@ -505,6 +520,8 @@ static int _usage(void)
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
@@ -538,10 +555,10 @@ int main(int argc, char * argv[])
 				prefs |= PREFS_x;
 				break;
 			default:
-				return _usage();
+				return _tar_usage();
 		}
 	if(prefs == 0)
-		return _usage();
+		return _tar_usage();
 	return (_tar(&prefs, archive, argc - optind, &argv[optind]) == 0)
 		? 0 : 2;
 }
