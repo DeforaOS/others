@@ -25,8 +25,16 @@
 
 
 /* host */
-static int _host_herror(char const * message, int ret);
+/* private */
+/* prototypes */
+static int _host(char * hostname);
 
+static int _host_herror(char const * message, int ret);
+static int _host_usage(void);
+
+
+/* functions */
+/* host */
 static int _host(char * hostname)
 {
 	struct hostent * he;
@@ -59,6 +67,8 @@ static int _host_usage(void)
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
