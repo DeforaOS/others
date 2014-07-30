@@ -21,14 +21,11 @@
 /* chroot.c */
 #undef PROGNAME
 #define main _chroot_main
-#define _usage _chroot_usage
 #define _Prefs _chroot_Prefs
 #define Prefs chroot_Prefs
 #define _prefs_parse _chroot_prefs_parse
-#define _chroot __chroot
 #include "../src/chroot.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -37,14 +34,11 @@
 /* clear.c */
 #undef PROGNAME
 #define main _clear_main
-#define _usage _clear_usage
 #define _Prefs _clear_Prefs
 #define Prefs clear_Prefs
 #define _prefs_parse _clear_prefs_parse
-#define _clear __clear
 #include "../src/clear.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -53,14 +47,11 @@
 /* halt.c */
 #undef PROGNAME
 #define main _halt_main
-#define _usage _halt_usage
 #define _Prefs _halt_Prefs
 #define Prefs halt_Prefs
 #define _prefs_parse _halt_prefs_parse
-#define _halt __halt
 #include "../src/halt.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -69,14 +60,11 @@
 /* hexdump.c */
 #undef PROGNAME
 #define main _hexdump_main
-#define _usage _hexdump_usage
 #define _Prefs _hexdump_Prefs
 #define Prefs hexdump_Prefs
 #define _prefs_parse _hexdump_prefs_parse
-#define _hexdump __hexdump
 #include "../src/hexdump.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -85,14 +73,11 @@
 /* host.c */
 #undef PROGNAME
 #define main _host_main
-#define _usage _host_usage
 #define _Prefs _host_Prefs
 #define Prefs host_Prefs
 #define _prefs_parse _host_prefs_parse
-#define _host __host
 #include "../src/host.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -101,14 +86,11 @@
 /* hostname.c */
 #undef PROGNAME
 #define main _hostname_main
-#define _usage _hostname_usage
 #define _Prefs _hostname_Prefs
 #define Prefs hostname_Prefs
 #define _prefs_parse _hostname_prefs_parse
-#define _hostname __hostname
 #include "../src/hostname.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -117,14 +99,11 @@
 /* ifconfig.c */
 #undef PROGNAME
 #define main _ifconfig_main
-#define _usage _ifconfig_usage
 #define _Prefs _ifconfig_Prefs
 #define Prefs ifconfig_Prefs
 #define _prefs_parse _ifconfig_prefs_parse
-#define _ifconfig __ifconfig
 #include "../src/ifconfig.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -133,14 +112,11 @@
 /* login.c */
 #undef PROGNAME
 #define main _login_main
-#define _usage _login_usage
 #define _Prefs _login_Prefs
 #define Prefs login_Prefs
 #define _prefs_parse _login_prefs_parse
-#define _login __login
 #include "../src/login.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -149,14 +125,11 @@
 /* mktemp.c */
 #undef PROGNAME
 #define main _mktemp_main
-#define _usage _mktemp_usage
 #define _Prefs _mktemp_Prefs
 #define Prefs mktemp_Prefs
 #define _prefs_parse _mktemp_prefs_parse
-#define _mktemp __mktemp
 #include "../src/mktemp.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -165,14 +138,11 @@
 /* mount.c */
 #undef PROGNAME
 #define main _mount_main
-#define _usage _mount_usage
 #define _Prefs _mount_Prefs
 #define Prefs mount_Prefs
 #define _prefs_parse _mount_prefs_parse
-#define _mount __mount
 #include "../src/mount.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -181,14 +151,11 @@
 /* poweroff.c */
 #undef PROGNAME
 #define main _poweroff_main
-#define _usage _poweroff_usage
 #define _Prefs _poweroff_Prefs
 #define Prefs poweroff_Prefs
 #define _prefs_parse _poweroff_prefs_parse
-#define _poweroff __poweroff
 #include "../src/poweroff.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -197,14 +164,11 @@
 /* reboot.c */
 #undef PROGNAME
 #define main _reboot_main
-#define _usage _reboot_usage
 #define _Prefs _reboot_Prefs
 #define Prefs reboot_Prefs
 #define _prefs_parse _reboot_prefs_parse
-#define _reboot __reboot
 #include "../src/reboot.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -213,14 +177,11 @@
 /* tar.c */
 #undef PROGNAME
 #define main _tar_main
-#define _usage _tar_usage
 #define _Prefs _tar_Prefs
 #define Prefs tar_Prefs
 #define _prefs_parse _tar_prefs_parse
-#define _tar __tar
 #include "../src/tar.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -229,14 +190,11 @@
 /* umount.c */
 #undef PROGNAME
 #define main _umount_main
-#define _usage _umount_usage
 #define _Prefs _umount_Prefs
 #define Prefs umount_Prefs
 #define _prefs_parse _umount_prefs_parse
-#define _umount __umount
 #include "../src/umount.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -245,14 +203,11 @@
 /* uptime.c */
 #undef PROGNAME
 #define main _uptime_main
-#define _usage _uptime_usage
 #define _Prefs _uptime_Prefs
 #define Prefs uptime_Prefs
 #define _prefs_parse _uptime_prefs_parse
-#define _uptime __uptime
 #include "../src/uptime.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
@@ -261,14 +216,11 @@
 /* w.c */
 #undef PROGNAME
 #define main _w_main
-#define _usage _w_usage
 #define _Prefs _w_Prefs
 #define Prefs w_Prefs
 #define _prefs_parse _w_prefs_parse
-#define _w __w
 #include "../src/w.c"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
