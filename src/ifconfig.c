@@ -34,8 +34,13 @@
 # include <netinet6/in6_var.h>
 #endif
 
+#ifndef PROGNAME
+# define PROGNAME "ifconfig"
+#endif
+
 
 /* ifconfig */
+/* private */
 /* types */
 typedef int Prefs;
 #define PREFS_a	0x1
@@ -49,19 +54,18 @@ typedef struct _idxstr
 
 
 /* prototypes */
-/* private */
+static int _ifconfig(Prefs prefs, int argc, char * argv[]);
+
+static int _ifconfig_error(char const * message, int ret);
+static int _ifconfig_usage(void);
+
 static char const * _inet_str(struct sockaddr * addr);
 
 static char const * _mac_media_str(int type);
 
-/* public */
-int ifconfig(Prefs prefs, int argc, char * argv[]);
-
 
 /* functions */
-/* public */
 /* ifconfig */
-static int _ifconfig_error(char const * message, int ret);
 static int _ifconfig_all(Prefs prefs);
 static int _ifconfig_do(Prefs prefs, char const * name, int argc,
 		char * argv[]);
@@ -81,7 +85,7 @@ static int _inet6_do(Prefs prefs, char const * name, int fd, void * ifa);
 #endif
 static void _inet6_print_addr(struct in6_addr * addr);
 
-int ifconfig(Prefs prefs, int argc, char * argv[])
+static int _ifconfig(Prefs prefs, int argc, char * argv[])
 {
 	if(prefs & PREFS_a)
 		return _ifconfig_all(prefs);
@@ -90,13 +94,6 @@ int ifconfig(Prefs prefs, int argc, char * argv[])
 	if(argc > 1)
 		return _ifconfig_do(prefs, argv[0], argc - 1, &argv[1]);
 	return 0;
-}
-
-static int _ifconfig_error(char const * message, int ret)
-{
-	fputs("ifconfig: ", stderr);
-	perror(message);
-	return ret;
 }
 
 static int _ifconfig_all(Prefs prefs)
@@ -337,7 +334,15 @@ static void _inet6_print_addr(struct in6_addr * addr)
 }
 
 
-/* private */
+/* ifconfig_error */
+static int _ifconfig_error(char const * message, int ret)
+{
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
 /* inet_str */
 char const * _inet_str(struct sockaddr * addr)
 {
@@ -356,6 +361,7 @@ char const * _inet_str(struct sockaddr * addr)
 }
 
 
+/* mac_media_str */
 static char const * _mac_media_str(int type)
 {
 	static char buf[32];
@@ -381,15 +387,17 @@ static char const * _mac_media_str(int type)
 }
 
 
-/* usage */
-static int _usage(void)
+/* ifconfig_usage */
+static int _ifconfig_usage(void)
 {
-	fputs("Usage: ifconfig [-m] interface [argument...]\n"
-"       ifconfig -a\n", stderr);
+	fputs("Usage: " PROGNAME " [-m] interface [argument...]\n"
+"       " PROGNAME " -a\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
@@ -407,14 +415,14 @@ int main(int argc, char * argv[])
 				prefs |= PREFS_m;
 				break;
 			default:
-				return _usage();
+				return _ifconfig_usage();
 		}
 	if(prefs & PREFS_a)
 	{
 		if(optind != argc)
-			return _usage();
+			return _ifconfig_usage();
 	}
 	else if(optind == argc)
-		return _usage();
-	return (ifconfig(prefs, argc - optind, &argv[optind]) == 0) ? 0 : 2;
+		return _ifconfig_usage();
+	return (_ifconfig(prefs, argc - optind, &argv[optind]) == 0) ? 0 : 2;
 }
