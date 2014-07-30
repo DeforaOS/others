@@ -19,7 +19,21 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#ifndef PROGNAME
+# define PROGNAME "hexdump"
+#endif
 
+
+/* hexdump */
+/* private */
+/* prototypes */
+static int _hexdump(int filec, char * filev[]);
+
+static int _hexdump_error(char const * message, int ret);
+static int _hexdump_usage(void);
+
+
+/* functions */
 /* hexdump */
 static int _hexdump_do(char * filename);
 
@@ -30,13 +44,6 @@ static int _hexdump(int filec, char * filev[])
 
 	for(i = 0; i < filec; i++)
 		ret |= _hexdump_do(filev[i]);
-	return ret;
-}
-
-static int _hexdump_error(char const * message, int ret)
-{
-	fputs("hexdump: ", stderr);
-	perror(message);
 	return ret;
 }
 
@@ -77,14 +84,25 @@ static int _hexdump_do(char * filename)
 }
 
 
-/* usage */
-static int _usage(void)
+/* hexdump_error */
+static int _hexdump_error(char const * message, int ret)
 {
-	fprintf(stderr, "%s", "Usage: hexdump file...\n");
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* hexdump_usage */
+static int _hexdump_usage(void)
+{
+	fputs("Usage: " PROGNAME " file...\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
@@ -94,9 +112,9 @@ int main(int argc, char * argv[])
 		switch(o)
 		{
 			default:
-				return _usage();
+				return _hexdump_usage();
 		}
 	if(optind == argc)
-		return _usage();
-	return _hexdump(argc - optind, &argv[optind]) == 0 ? 0 : 2;
+		return _hexdump_usage();
+	return (_hexdump(argc - optind, &argv[optind]) == 0) ? 0 : 2;
 }
