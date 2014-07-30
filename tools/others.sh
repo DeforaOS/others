@@ -31,14 +31,11 @@ includes() {
 /* $BASENAME */
 #undef PROGNAME
 #define main _${PROGRAM}_main
-#define _usage _${PROGRAM}_usage
 #define _Prefs _${PROGRAM}_Prefs
 #define Prefs ${PROGRAM}_Prefs
 #define _prefs_parse _${PROGRAM}_prefs_parse
-#define _${PROGRAM} __${PROGRAM}
 #include "../src/$BASENAME"
 #undef main
-#undef _usage
 #undef _Prefs
 #undef Prefs
 #undef _prefs_parse
