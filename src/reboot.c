@@ -20,8 +20,20 @@
 #include <stdio.h>
 #include <errno.h>
 
+#ifndef PROGNAME
+# define PROGNAME "reboot"
+#endif
+
 
 /* reboot */
+/* private */
+/* prototypes */
+static int _reboot(void);
+
+static int _reboot_error(char const * message, int ret);
+static int _reboot_usage(void);
+
+
 /* functions */
 /* reboot */
 static int _reboot(void)
@@ -34,7 +46,7 @@ static int _reboot(void)
 #elif defined(RB_POWEROFF) /* FreeBSD */
 	if(reboot(RB_AUTOBOOT) != 0)
 #elif defined(RB_AUTOBOOT)
-# if defined(__APPLE__) /* MacOS X */
+# if defined(__APPLE__) /* Darwin */
 	if(reboot(RB_AUTOBOOT) != 0)
 # elif defined(__OpenBSD__) /* OpenBSD */
 	if(reboot(RB_AUTOBOOT) != 0)
@@ -45,30 +57,38 @@ static int _reboot(void)
 # warning Unsupported platform
 	errno = ENOSYS;
 #endif
-	{
-		perror("reboot");
-		return 1;
-	}
+		_reboot_error(NULL, 1);
 	return 0;
 }
 
 
-/* usage */
-static int _usage(void)
+/* reboot_error */
+static int _reboot_error(char const * message, int ret)
 {
-	fputs("Usage: reboot\n", stderr);
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* reboot_usage */
+static int _reboot_usage(void)
+{
+	fputs("Usage: " PROGNAME "\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
 	int o;
 
 	while((o = getopt(argc, argv, "")) != -1)
-		return _usage();
+		return _reboot_usage();
 	if(optind != argc)
-		return _usage();
+		return _reboot_usage();
 	return _reboot() ? 0 : 2;
 }
