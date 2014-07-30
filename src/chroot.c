@@ -26,7 +26,7 @@
 
 /* private */
 /* prototypes */
-static int _chroot(char const * pathname);
+static int _chroot(char const * pathname, char const * command);
 
 static int _chroot_error(char const * message, int ret);
 static int _chroot_usage(void);
@@ -34,7 +34,7 @@ static int _chroot_usage(void);
 
 /* functions */
 /* chroot */
-static int _chroot(char const * pathname)
+static int _chroot(char const * pathname, char const * command)
 {
 	char const * shell;
 
@@ -42,7 +42,10 @@ static int _chroot(char const * pathname)
 		return _chroot_error(pathname, 2);
 	if((shell = getenv("SHELL")) == NULL)
 		shell = "/bin/sh";
-	execl(shell, shell, NULL);
+	if(command != NULL)
+		execl(shell, shell, "-c", command, NULL);
+	else
+		execl(shell, shell, NULL);
 	return 0;
 }
 
@@ -59,7 +62,7 @@ static int _chroot_error(char const * message, int ret)
 /* chroot_usage */
 static int _chroot_usage(void)
 {
-	fputs("Usage: " PROGNAME " path\n", stderr);
+	fputs("Usage: " PROGNAME " path [command]\n", stderr);
 	return 1;
 }
 
@@ -73,7 +76,7 @@ int main(int argc, char * argv[])
 
 	while((o = getopt(argc, argv, "")) != -1)
 		return _chroot_usage();
-	if(argc - optind != 1)
+	if(argc - optind != 1 && argc - optind != 2)
 		return _chroot_usage();
-	return (_chroot(argv[optind]) == 0) ? 0 : 2;
+	return (_chroot(argv[optind], argv[optind + 1]) == 0) ? 0 : 2;
 }
