@@ -26,12 +26,24 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef PROGNAME
+# define PROGNAME "umount"
+#endif
+
 
 /* umount */
+/* private */
 /* types */
 typedef int Prefs;
 #define PREFS_a 0x1
 #define PREFS_f 0x2
+
+
+/* prototypes */
+static int _umount(Prefs * prefs, int pathc, char * pathv[]);
+
+static int _umount_error(char const * message, int ret);
+static int _umount_usage(void);
 
 
 /* functions */
@@ -48,13 +60,6 @@ static int _umount(Prefs * prefs, int pathc, char * pathv[])
 		return _umount_all(prefs);
 	for(i = 0; i < pathc; i++)
 		ret |= _umount_do(prefs, pathv[i]);
-	return ret;
-}
-
-static int _umount_error(char const * message, int ret)
-{
-	fputs("umount: ", stderr);
-	perror(message);
 	return ret;
 }
 
@@ -139,15 +144,26 @@ static int _umount_do(Prefs * prefs, char const * pathname)
 }
 
 
-/* usage */
-static int _usage(void)
+/* umount_error */
+static int _umount_error(char const * message, int ret)
 {
-	fputs("Usage: umount -a [-f]\n"
-"       umount [-f] special | node ...\n", stderr);
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* umount_usage */
+static int _umount_usage(void)
+{
+	fputs("Usage: " PROGNAME " -a [-f]\n"
+"       " PROGNAME " [-f] special | node ...\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
@@ -165,9 +181,9 @@ int main(int argc, char * argv[])
 				prefs |= PREFS_f;
 				break;
 			default:
-				return _usage();
+				return _umount_usage();
 		}
 	if(optind == argc && (prefs & PREFS_a) != PREFS_a)
-		return _usage();
+		return _umount_usage();
 	return (_umount(&prefs, argc - optind, &argv[optind]) == 0) ? 0 : 2;
 }
