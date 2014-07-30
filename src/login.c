@@ -23,10 +23,25 @@
 #include <signal.h>
 #include <errno.h>
 
+#ifndef PROGNAME
+# define PROGNAME "login"
+#endif
+
 
 /* login */
+/* private */
+/* prototypes */
+static int _login(char const * user);
+
 static int _login_error(char const * message, int ret);
+static int _login_usage(void);
+
+
+/* functions */
+/* login */
 static int _login_do(char const * user);
+static char const * _do_ask_username(void);
+static char const * _do_ask_password(void);
 
 static int _login(char const * user)
 {
@@ -37,16 +52,6 @@ static int _login(char const * user)
 			return 1;
 	return 0;
 }
-
-static int _login_error(char const * message, int ret)
-{
-	fputs("login: ", stderr);
-	perror(message);
-	return ret;
-}
-
-static char const * _do_ask_username(void);
-static char const * _do_ask_password(void);
 
 static int _login_do(char const * user)
 {
@@ -131,14 +136,25 @@ static char const * _do_ask_password(void)
 }
 
 
-/* usage */
-static int _usage(void)
+/* login_error */
+static int _login_error(char const * message, int ret)
 {
-	fputs("Usage: login [user]\n", stderr);
+	fputs(PROGNAME ": ", stderr);
+	perror(message);
+	return ret;
+}
+
+
+/* login_usage */
+static int _login_usage(void)
+{
+	fputs("Usage: " PROGNAME " [user]\n", stderr);
 	return 1;
 }
 
 
+/* public */
+/* functions */
 /* main */
 int main(int argc, char * argv[])
 {
@@ -149,11 +165,10 @@ int main(int argc, char * argv[])
 		switch(o)
 		{
 			default:
-				return _usage();
+				return _login_usage();
 		}
-	if(optind != argc
-			&& optind + 1 != argc)
-		return _usage();
+	if(optind != argc && optind + 1 != argc)
+		return _login_usage();
 	signal(SIGINT, SIG_IGN);
 	return _login(user) ? 0 : 2;
 }
