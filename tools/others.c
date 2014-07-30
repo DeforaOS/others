@@ -19,6 +19,7 @@
 
 
 /* chroot.c */
+#undef PROGNAME
 #define main _chroot_main
 #define _usage _chroot_usage
 #define _Prefs _chroot_Prefs
@@ -34,6 +35,7 @@
 #undef _chroot
 
 /* clear.c */
+#undef PROGNAME
 #define main _clear_main
 #define _usage _clear_usage
 #define _Prefs _clear_Prefs
@@ -49,6 +51,7 @@
 #undef _clear
 
 /* halt.c */
+#undef PROGNAME
 #define main _halt_main
 #define _usage _halt_usage
 #define _Prefs _halt_Prefs
@@ -64,6 +67,7 @@
 #undef _halt
 
 /* hexdump.c */
+#undef PROGNAME
 #define main _hexdump_main
 #define _usage _hexdump_usage
 #define _Prefs _hexdump_Prefs
@@ -79,6 +83,7 @@
 #undef _hexdump
 
 /* host.c */
+#undef PROGNAME
 #define main _host_main
 #define _usage _host_usage
 #define _Prefs _host_Prefs
@@ -94,6 +99,7 @@
 #undef _host
 
 /* hostname.c */
+#undef PROGNAME
 #define main _hostname_main
 #define _usage _hostname_usage
 #define _Prefs _hostname_Prefs
@@ -109,6 +115,7 @@
 #undef _hostname
 
 /* ifconfig.c */
+#undef PROGNAME
 #define main _ifconfig_main
 #define _usage _ifconfig_usage
 #define _Prefs _ifconfig_Prefs
@@ -124,6 +131,7 @@
 #undef _ifconfig
 
 /* login.c */
+#undef PROGNAME
 #define main _login_main
 #define _usage _login_usage
 #define _Prefs _login_Prefs
@@ -139,6 +147,7 @@
 #undef _login
 
 /* mktemp.c */
+#undef PROGNAME
 #define main _mktemp_main
 #define _usage _mktemp_usage
 #define _Prefs _mktemp_Prefs
@@ -154,6 +163,7 @@
 #undef _mktemp
 
 /* mount.c */
+#undef PROGNAME
 #define main _mount_main
 #define _usage _mount_usage
 #define _Prefs _mount_Prefs
@@ -169,6 +179,7 @@
 #undef _mount
 
 /* poweroff.c */
+#undef PROGNAME
 #define main _poweroff_main
 #define _usage _poweroff_usage
 #define _Prefs _poweroff_Prefs
@@ -184,6 +195,7 @@
 #undef _poweroff
 
 /* reboot.c */
+#undef PROGNAME
 #define main _reboot_main
 #define _usage _reboot_usage
 #define _Prefs _reboot_Prefs
@@ -199,6 +211,7 @@
 #undef _reboot
 
 /* tar.c */
+#undef PROGNAME
 #define main _tar_main
 #define _usage _tar_usage
 #define _Prefs _tar_Prefs
@@ -214,6 +227,7 @@
 #undef _tar
 
 /* umount.c */
+#undef PROGNAME
 #define main _umount_main
 #define _usage _umount_usage
 #define _Prefs _umount_Prefs
@@ -229,6 +243,7 @@
 #undef _umount
 
 /* uptime.c */
+#undef PROGNAME
 #define main _uptime_main
 #define _usage _uptime_usage
 #define _Prefs _uptime_Prefs
@@ -244,6 +259,7 @@
 #undef _uptime
 
 /* w.c */
+#undef PROGNAME
 #define main _w_main
 #define _usage _w_usage
 #define _Prefs _w_Prefs
