@@ -34,6 +34,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/mount.c \
 		$(PACKAGE)-$(VERSION)/src/poweroff.c \
 		$(PACKAGE)-$(VERSION)/src/reboot.c \
+		$(PACKAGE)-$(VERSION)/src/servid.c \
 		$(PACKAGE)-$(VERSION)/src/tar.c \
 		$(PACKAGE)-$(VERSION)/src/umount.c \
 		$(PACKAGE)-$(VERSION)/src/uptime.c \

@@ -174,6 +174,19 @@
 #undef _prefs_parse
 #undef _reboot
 
+/* servid.c */
+#undef PROGNAME
+#define main _servid_main
+#define _Prefs _servid_Prefs
+#define Prefs servid_Prefs
+#define _prefs_parse _servid_prefs_parse
+#include "../src/servid.c"
+#undef main
+#undef _Prefs
+#undef Prefs
+#undef _prefs_parse
+#undef _servid
+
 /* tar.c */
 #undef PROGNAME
 #define main _tar_main
@@ -242,6 +255,7 @@ Call calls[] =
 	{ "mount",	_mount_main	},
 	{ "poweroff",	_poweroff_main	},
 	{ "reboot",	_reboot_main	},
+	{ "servid",	_servid_main	},
 	{ "tar",	_tar_main	},
 	{ "umount",	_umount_main	},
 	{ "uptime",	_uptime_main	},

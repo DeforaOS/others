@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)chroot $(OBJDIR)clear $(OBJDIR)halt $(OBJDIR)hexdump $(OBJDIR)host $(OBJDIR)hostname $(OBJDIR)ifconfig $(OBJDIR)login $(OBJDIR)mktemp $(OBJDIR)mount $(OBJDIR)poweroff $(OBJDIR)reboot $(OBJDIR)tar $(OBJDIR)umount $(OBJDIR)uptime $(OBJDIR)w
+TARGETS	= $(OBJDIR)chroot $(OBJDIR)clear $(OBJDIR)halt $(OBJDIR)hexdump $(OBJDIR)host $(OBJDIR)hostname $(OBJDIR)ifconfig $(OBJDIR)login $(OBJDIR)mktemp $(OBJDIR)mount $(OBJDIR)poweroff $(OBJDIR)reboot $(OBJDIR)servid $(OBJDIR)tar $(OBJDIR)umount $(OBJDIR)uptime $(OBJDIR)w
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -101,6 +101,13 @@ reboot_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)reboot: $(reboot_OBJS)
 	$(CC) -o $(OBJDIR)reboot $(reboot_OBJS) $(reboot_LDFLAGS)
 
+servid_OBJS = $(OBJDIR)servid.o
+servid_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+servid_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) 
+
+$(OBJDIR)servid: $(servid_OBJS)
+	$(CC) -o $(OBJDIR)servid $(servid_OBJS) $(servid_LDFLAGS)
+
 tar_OBJS = $(OBJDIR)tar.o
 tar_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 tar_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
@@ -165,6 +172,9 @@ $(OBJDIR)poweroff.o: poweroff.c
 $(OBJDIR)reboot.o: reboot.c
 	$(CC) $(reboot_CFLAGS) -o $(OBJDIR)reboot.o -c reboot.c
 
+$(OBJDIR)servid.o: servid.c
+	$(CC) $(servid_CFLAGS) -o $(OBJDIR)servid.o -c servid.c
+
 $(OBJDIR)tar.o: tar.c tar.h
 	$(CC) $(tar_CFLAGS) -o $(OBJDIR)tar.o -c tar.c
 
@@ -178,7 +188,7 @@ $(OBJDIR)w.o: w.c utmpx.c
 	$(CC) $(w_CFLAGS) -o $(OBJDIR)w.o -c w.c
 
 clean:
-	$(RM) -- $(chroot_OBJS) $(clear_OBJS) $(halt_OBJS) $(hexdump_OBJS) $(host_OBJS) $(hostname_OBJS) $(ifconfig_OBJS) $(login_OBJS) $(mktemp_OBJS) $(mount_OBJS) $(poweroff_OBJS) $(reboot_OBJS) $(tar_OBJS) $(umount_OBJS) $(uptime_OBJS) $(w_OBJS)
+	$(RM) -- $(chroot_OBJS) $(clear_OBJS) $(halt_OBJS) $(hexdump_OBJS) $(host_OBJS) $(hostname_OBJS) $(ifconfig_OBJS) $(login_OBJS) $(mktemp_OBJS) $(mount_OBJS) $(poweroff_OBJS) $(reboot_OBJS) $(servid_OBJS) $(tar_OBJS) $(umount_OBJS) $(uptime_OBJS) $(w_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)
@@ -209,6 +219,8 @@ install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 $(OBJDIR)reboot $(DESTDIR)$(BINDIR)/reboot
 	$(MKDIR) $(DESTDIR)$(BINDIR)
+	$(INSTALL) -m 0755 $(OBJDIR)servid $(DESTDIR)$(BINDIR)/servid
+	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 $(OBJDIR)tar $(DESTDIR)$(BINDIR)/tar
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 $(OBJDIR)umount $(DESTDIR)$(BINDIR)/umount
@@ -230,6 +242,7 @@ uninstall:
 	$(RM) -- $(DESTDIR)$(BINDIR)/mount
 	$(RM) -- $(DESTDIR)$(BINDIR)/poweroff
 	$(RM) -- $(DESTDIR)$(BINDIR)/reboot
+	$(RM) -- $(DESTDIR)$(BINDIR)/servid
 	$(RM) -- $(DESTDIR)$(BINDIR)/tar
 	$(RM) -- $(DESTDIR)$(BINDIR)/umount
 	$(RM) -- $(DESTDIR)$(BINDIR)/uptime
