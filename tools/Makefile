@@ -1,7 +1,8 @@
 MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 RM	= rm -f
-TARGETS	= linuxrc oinit otherbox
+TARGETS	= $(OBJDIR)linuxrc $(OBJDIR)oinit $(OBJDIR)otherbox
+OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
 BINDIR	= $(PREFIX)/bin
@@ -19,38 +20,38 @@ INSTALL	= install
 
 all: $(TARGETS)
 
-linuxrc_OBJS = linuxrc.o
+linuxrc_OBJS = $(OBJDIR)linuxrc.o
 linuxrc_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 linuxrc_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-linuxrc: $(linuxrc_OBJS)
-	$(CC) -o linuxrc $(linuxrc_OBJS) $(linuxrc_LDFLAGS)
+$(OBJDIR)linuxrc: $(linuxrc_OBJS)
+	$(CC) -o $(OBJDIR)linuxrc $(linuxrc_OBJS) $(linuxrc_LDFLAGS)
 
-oinit_OBJS = oinit.o
+oinit_OBJS = $(OBJDIR)oinit.o
 oinit_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 oinit_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 
-oinit: $(oinit_OBJS)
-	$(CC) -o oinit $(oinit_OBJS) $(oinit_LDFLAGS)
+$(OBJDIR)oinit: $(oinit_OBJS)
+	$(CC) -o $(OBJDIR)oinit $(oinit_OBJS) $(oinit_LDFLAGS)
 
-otherbox_OBJS = otherbox.o others.o
+otherbox_OBJS = $(OBJDIR)otherbox.o $(OBJDIR)others.o
 otherbox_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 otherbox_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) 
 
-otherbox: $(otherbox_OBJS)
-	$(CC) -o otherbox $(otherbox_OBJS) $(otherbox_LDFLAGS)
+$(OBJDIR)otherbox: $(otherbox_OBJS)
+	$(CC) -o $(OBJDIR)otherbox $(otherbox_OBJS) $(otherbox_LDFLAGS)
 
-linuxrc.o: linuxrc.c
-	$(CC) $(linuxrc_CFLAGS) -c linuxrc.c
+$(OBJDIR)linuxrc.o: linuxrc.c
+	$(CC) $(linuxrc_CFLAGS) -o $(OBJDIR)linuxrc.o -c linuxrc.c
 
-oinit.o: oinit.c
-	$(CC) $(oinit_CFLAGS) -c oinit.c
+$(OBJDIR)oinit.o: oinit.c
+	$(CC) $(oinit_CFLAGS) -o $(OBJDIR)oinit.o -c oinit.c
 
-otherbox.o: otherbox.c otherbox.h
-	$(CC) $(otherbox_CFLAGS) -c otherbox.c
+$(OBJDIR)otherbox.o: otherbox.c otherbox.h
+	$(CC) $(otherbox_CFLAGS) -o $(OBJDIR)otherbox.o -c otherbox.c
 
-others.o: others.c
-	$(CC) $(otherbox_CFLAGS) -c others.c
+$(OBJDIR)others.o: others.c
+	$(CC) $(otherbox_CFLAGS) -o $(OBJDIR)others.o -c others.c
 
 clean:
 	$(RM) -- $(linuxrc_OBJS) $(oinit_OBJS) $(otherbox_OBJS)
