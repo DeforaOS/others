@@ -33,6 +33,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/mktemp.c \
 		$(PACKAGE)-$(VERSION)/src/mount.c \
 		$(PACKAGE)-$(VERSION)/src/poweroff.c \
+		$(PACKAGE)-$(VERSION)/src/protoid.c \
 		$(PACKAGE)-$(VERSION)/src/reboot.c \
 		$(PACKAGE)-$(VERSION)/src/servid.c \
 		$(PACKAGE)-$(VERSION)/src/tar.c \

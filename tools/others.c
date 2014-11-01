@@ -161,6 +161,19 @@
 #undef _prefs_parse
 #undef _poweroff
 
+/* protoid.c */
+#undef PROGNAME
+#define main _protoid_main
+#define _Prefs _protoid_Prefs
+#define Prefs protoid_Prefs
+#define _prefs_parse _protoid_prefs_parse
+#include "../src/protoid.c"
+#undef main
+#undef _Prefs
+#undef Prefs
+#undef _prefs_parse
+#undef _protoid
+
 /* reboot.c */
 #undef PROGNAME
 #define main _reboot_main
@@ -254,6 +267,7 @@ Call calls[] =
 	{ "mktemp",	_mktemp_main	},
 	{ "mount",	_mount_main	},
 	{ "poweroff",	_poweroff_main	},
+	{ "protoid",	_protoid_main	},
 	{ "reboot",	_reboot_main	},
 	{ "servid",	_servid_main	},
 	{ "tar",	_tar_main	},
