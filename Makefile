@@ -32,6 +32,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/login.c \
 		$(PACKAGE)-$(VERSION)/src/mktemp.c \
 		$(PACKAGE)-$(VERSION)/src/mount.c \
+		$(PACKAGE)-$(VERSION)/src/netid.c \
 		$(PACKAGE)-$(VERSION)/src/poweroff.c \
 		$(PACKAGE)-$(VERSION)/src/protoid.c \
 		$(PACKAGE)-$(VERSION)/src/reboot.c \

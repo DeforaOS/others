@@ -148,6 +148,19 @@
 #undef _prefs_parse
 #undef _mount
 
+/* netid.c */
+#undef PROGNAME
+#define main _netid_main
+#define _Prefs _netid_Prefs
+#define Prefs netid_Prefs
+#define _prefs_parse _netid_prefs_parse
+#include "../src/netid.c"
+#undef main
+#undef _Prefs
+#undef Prefs
+#undef _prefs_parse
+#undef _netid
+
 /* poweroff.c */
 #undef PROGNAME
 #define main _poweroff_main
@@ -266,6 +279,7 @@ Call calls[] =
 	{ "login",	_login_main	},
 	{ "mktemp",	_mktemp_main	},
 	{ "mount",	_mount_main	},
+	{ "netid",	_netid_main	},
 	{ "poweroff",	_poweroff_main	},
 	{ "protoid",	_protoid_main	},
 	{ "reboot",	_reboot_main	},
