@@ -26,8 +26,8 @@
 /* prototypes */
 static int _netid(char const * network);
 
-static int _error(char const * message, int ret);
-static int _usage(void);
+static int _netid_error(char const * message, int ret);
+static int _netid_usage(void);
 
 
 /* netid */
@@ -36,22 +36,22 @@ static int _netid(char const * network)
 	struct netent * ne;
 
 	if((ne = getnetbyname(network)) == NULL)
-		return -_error(network, 1);
+		return -_netid_error(network, 1);
 	printf("%u\n", ne->n_net);
 	return 0;
 }
 
 
-/* error */
-static int _error(char const * message, int ret)
+/* netid_error */
+static int _netid_error(char const * message, int ret)
 {
 	fprintf(stderr, "%s: %s: %s\n", "netid", message, "Network not found");
 	return ret;
 }
 
 
-/* usage */
-static int _usage(void)
+/* netid_usage */
+static int _netid_usage(void)
 {
 	fputs("Usage: netid network...\n", stderr);
 	return 1;
@@ -68,10 +68,10 @@ int main(int argc, char * argv[])
 		switch(o)
 		{
 			default:
-				return _usage();
+				return _netid_usage();
 		}
 	if(optind == argc)
-		return _usage();
+		return _netid_usage();
 	for(i = optind; i < argc; i++)
 		/* XXX report errors */
 		_netid(argv[i]);

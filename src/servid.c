@@ -25,8 +25,8 @@
 /* prototypes */
 static int _servid(char const * protocol, char const * service);
 
-static int _error(char const * message, int ret);
-static int _usage(void);
+static int _servid_error(char const * message, int ret);
+static int _servid_usage(void);
 
 
 /* functions */
@@ -37,22 +37,22 @@ static int _servid(char const * protocol, char const * service)
 
 	setservent(1);
 	if((se = getservbyname(service, protocol)) == NULL)
-		return _error(service, 1);
+		return _servid_error(service, 1);
 	printf("%d/%s\n", ntohs(se->s_port), se->s_proto);
 	return 0;
 }
 
 
-/* error */
-static int _error(char const * message, int ret)
+/* servid_error */
+static int _servid_error(char const * message, int ret)
 {
 	fprintf(stderr, "%s: %s: %s\n", "servid", message, "Service not found");
 	return ret;
 }
 
 
-/* usage */
-static int _usage(void)
+/* servid_usage */
+static int _servid_usage(void)
 {
 	fputs("Usage: servid -P protocol service...\n", stderr);
 	return 1;
@@ -75,10 +75,10 @@ int main(int argc, char * argv[])
 				protocol = optarg;
 				break;
 			default:
-				return _usage();
+				return _servid_usage();
 		}
 	if(protocol == NULL || optind == argc)
-		return _usage();
+		return _servid_usage();
 	for(i = optind; i < argc; i++)
 		/* XXX report errors */
 		_servid(protocol, argv[i]);
