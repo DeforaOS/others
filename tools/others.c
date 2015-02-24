@@ -44,6 +44,19 @@
 #undef _prefs_parse
 #undef _clear
 
+/* eject.c */
+#undef PROGNAME
+#define main _eject_main
+#define _Prefs _eject_Prefs
+#define Prefs eject_Prefs
+#define _prefs_parse _eject_prefs_parse
+#include "../src/eject.c"
+#undef main
+#undef _Prefs
+#undef Prefs
+#undef _prefs_parse
+#undef _eject
+
 /* halt.c */
 #undef PROGNAME
 #define main _halt_main
@@ -271,6 +284,7 @@ Call calls[] =
 
 	{ "chroot",	_chroot_main	},
 	{ "clear",	_clear_main	},
+	{ "eject",	_eject_main	},
 	{ "halt",	_halt_main	},
 	{ "hexdump",	_hexdump_main	},
 	{ "host",	_host_main	},
