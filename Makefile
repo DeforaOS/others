@@ -28,6 +28,7 @@ dist:
 	@cd $(OBJDIR). && $(TAR) -czvf $(OBJDIR)$(PACKAGE)-$(VERSION).tar.gz -- \
 		$(PACKAGE)-$(VERSION)/src/chroot.c \
 		$(PACKAGE)-$(VERSION)/src/clear.c \
+		$(PACKAGE)-$(VERSION)/src/eject.c \
 		$(PACKAGE)-$(VERSION)/src/halt.c \
 		$(PACKAGE)-$(VERSION)/src/hexdump.c \
 		$(PACKAGE)-$(VERSION)/src/host.c \
