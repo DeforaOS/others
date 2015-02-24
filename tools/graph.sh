@@ -26,7 +26,7 @@ VIEW="view"
 
 #functions
 #main
-$RM ../src/*.o.png
+$RM -- ../src/*.o.png
 #FIXME force the i386 architecture for the moment
 #arch=$(uname -m)
 arch="i386"
@@ -35,4 +35,4 @@ os=$(uname -s)
 for i in ../src/*.o; do
 	$DOT -o "$i.png" "$i"
 done
-$VIEW ../src/*.o.png
+$VIEW -- ../src/*.o.png
