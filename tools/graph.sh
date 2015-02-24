@@ -17,7 +17,7 @@
 
 
 #variables
-CC="../../../../../Devel/src/C99/C99-git/src/c99"
+CC="../../../../../Devel/src/C99/C99-git/src/c99 -M graph"
 DOT="dot -Tpng:cairo:gd"
 MAKE="make -k"
 RM="rm -f"
@@ -27,7 +27,11 @@ VIEW="view"
 #functions
 #main
 $RM ../src/*.o.png
-(cd '../src' && $MAKE CC="$CC" CPPFLAGS="-M graph -D__ELF__ -D__i386__" CFLAGS= distclean all)
+#FIXME force the i386 architecture for the moment
+#arch=$(uname -m)
+arch="i386"
+os=$(uname -s)
+(cd "../src" && $MAKE CC="$CC" CPPFLAGS="-D __${os}__=1 -D __${arch}__=1 -D __ELF__=1" CFLAGS= distclean all)
 for i in ../src/*.o; do
 	$DOT -o "$i.png" "$i"
 done
