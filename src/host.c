@@ -29,7 +29,7 @@
 /* host */
 /* private */
 /* prototypes */
-static int _host(char * hostname);
+static int _host(int family, char * hostname);
 
 static int _host_gaierror(char const * message, int error);
 static int _host_usage(void);
@@ -37,7 +37,7 @@ static int _host_usage(void);
 
 /* functions */
 /* host */
-static int _host(char * hostname)
+static int _host(int family, char * hostname)
 {
 	struct addrinfo hints;
 	struct addrinfo * ai;
@@ -46,6 +46,7 @@ static int _host(char * hostname)
 	struct sockaddr_in * sa;
 
 	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = family;
 	hints.ai_socktype = SOCK_STREAM;
 	if((res = getaddrinfo(hostname, NULL, &hints, &ai)) != 0)
 		return _host_gaierror(hostname, res);
@@ -73,7 +74,7 @@ static int _host_gaierror(char const * message, int error)
 /* host_usage */
 static int _host_usage(void)
 {
-	fputs("Usage: " PROGNAME " address\n", stderr);
+	fputs("Usage: " PROGNAME " [-46] address\n", stderr);
 	return 1;
 }
 
@@ -84,14 +85,21 @@ static int _host_usage(void)
 int main(int argc, char * argv[])
 {
 	int o;
+	int family = AF_UNSPEC;
 
-	while((o = getopt(argc, argv, "")) != -1)
+	while((o = getopt(argc, argv, "46")) != -1)
 		switch(o)
 		{
+			case '4':
+				family = AF_INET;
+				break;
+			case '6':
+				family = AF_INET6;
+				break;
 			default:
 				return _host_usage();
 		}
 	if(optind != argc - 1)
 		return _host_usage();
-	return (_host(argv[optind]) == 0) ? 0 : 2;
+	return (_host(family, argv[optind]) == 0) ? 0 : 2;
 }
