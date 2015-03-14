@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 #ifndef PROGNAME
 # define PROGNAME "host"
@@ -29,7 +30,7 @@
 /* prototypes */
 static int _host(char * hostname);
 
-static int _host_herror(char const * message, int ret);
+static int _host_gaierror(char const * message, int error);
 static int _host_usage(void);
 
 
@@ -37,39 +38,31 @@ static int _host_usage(void);
 /* host */
 static int _host(char * hostname)
 {
-	struct hostent * he;
+	struct addrinfo * ai;
+	int res;
+	struct addrinfo * p;
+	struct sockaddr_in * sa;
 
-	if((he = gethostbyname(hostname)) == NULL)
-		return _host_herror(hostname, 1);
-	printf("%s has address %u.%u.%u.%u\n", hostname,
-			(unsigned char)he->h_addr_list[0][0],
-			(unsigned char)he->h_addr_list[0][1],
-			(unsigned char)he->h_addr_list[0][2],
-			(unsigned char)he->h_addr_list[0][3]);
+	if((res = getaddrinfo(hostname, NULL, NULL, &ai)) != 0)
+		return _host_gaierror(hostname, res);
+	for(p = ai; p != NULL; p = p->ai_next)
+		if(p->ai_family == AF_INET)
+		{
+			sa = (struct sockaddr_in *)p->ai_addr;
+			printf("%s has address %s\n", hostname,
+					inet_ntoa(sa->sin_addr));
+		}
+	freeaddrinfo(ai);
 	return 0;
 }
 
 
-/* herror */
-static int _host_herror(char const * message, int ret)
+/* host_gaierror */
+static int _host_gaierror(char const * message, int error)
 {
-	struct
-	{
-		int error;
-		char const * message;
-	} em[] = {
-		{ HOST_NOT_FOUND,	"Host not found"	},
-		{ NO_DATA,		"No data"		},
-		{ NO_RECOVERY,		"No recovery"		},
-		{ TRY_AGAIN,		"Try again"		},
-		{ 0,			"Unknown error"		}
-	};
-	int i;
-
-	fprintf(stderr, "%s%s%s", PROGNAME ": ", message, ": ");
-	for(i = 0; em[i].error != 0 && em[i].error != h_errno; i++);
-	fprintf(stderr, "%s\n", em[i].message);
-	return ret;
+	fprintf(stderr, "%s%s%s%s\n", PROGNAME ": ", message, ": ",
+			gai_strerror(error));
+	return -1;
 }
 
 
