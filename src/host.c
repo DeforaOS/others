@@ -17,6 +17,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <netdb.h>
 #include <arpa/inet.h>
 
@@ -38,12 +39,15 @@ static int _host_usage(void);
 /* host */
 static int _host(char * hostname)
 {
+	struct addrinfo hints;
 	struct addrinfo * ai;
 	int res;
 	struct addrinfo * p;
 	struct sockaddr_in * sa;
 
-	if((res = getaddrinfo(hostname, NULL, NULL, &ai)) != 0)
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_socktype = SOCK_STREAM;
+	if((res = getaddrinfo(hostname, NULL, &hints, &ai)) != 0)
 		return _host_gaierror(hostname, res);
 	for(p = ai; p != NULL; p = p->ai_next)
 		if(p->ai_family == AF_INET)
