@@ -1,4 +1,4 @@
-TARGETS	= $(OBJDIR)chroot $(OBJDIR)clear $(OBJDIR)eject $(OBJDIR)halt $(OBJDIR)hexdump $(OBJDIR)host $(OBJDIR)hostname $(OBJDIR)ifconfig $(OBJDIR)login $(OBJDIR)mktemp $(OBJDIR)mount $(OBJDIR)netid $(OBJDIR)poweroff $(OBJDIR)protoid $(OBJDIR)reboot $(OBJDIR)servid $(OBJDIR)tar $(OBJDIR)umount $(OBJDIR)uptime $(OBJDIR)w
+TARGETS	= $(OBJDIR)chroot $(OBJDIR)clear $(OBJDIR)eject $(OBJDIR)halt $(OBJDIR)hexdump $(OBJDIR)host $(OBJDIR)hostname $(OBJDIR)ifconfig $(OBJDIR)login $(OBJDIR)mktemp $(OBJDIR)mount $(OBJDIR)netid $(OBJDIR)poweroff $(OBJDIR)protoid $(OBJDIR)reboot $(OBJDIR)resize $(OBJDIR)servid $(OBJDIR)tar $(OBJDIR)umount $(OBJDIR)uptime $(OBJDIR)w
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -122,6 +122,13 @@ reboot_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)reboot: $(reboot_OBJS)
 	$(CC) -o $(OBJDIR)reboot $(reboot_OBJS) $(reboot_LDFLAGS)
 
+resize_OBJS = $(OBJDIR)resize.o
+resize_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+resize_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+$(OBJDIR)resize: $(resize_OBJS)
+	$(CC) -o $(OBJDIR)resize $(resize_OBJS) $(resize_LDFLAGS)
+
 servid_OBJS = $(OBJDIR)servid.o
 servid_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 servid_LDFLAGS = $(LDFLAGSF) $(LDFLAGS) 
@@ -202,6 +209,9 @@ $(OBJDIR)protoid.o: protoid.c
 $(OBJDIR)reboot.o: reboot.c
 	$(CC) $(reboot_CFLAGS) -o $(OBJDIR)reboot.o -c reboot.c
 
+$(OBJDIR)resize.o: resize.c
+	$(CC) $(resize_CFLAGS) -o $(OBJDIR)resize.o -c resize.c
+
 $(OBJDIR)servid.o: servid.c
 	$(CC) $(servid_CFLAGS) -o $(OBJDIR)servid.o -c servid.c
 
@@ -218,7 +228,7 @@ $(OBJDIR)w.o: w.c utmpx.c
 	$(CC) $(w_CFLAGS) -o $(OBJDIR)w.o -c w.c
 
 clean:
-	$(RM) -- $(chroot_OBJS) $(clear_OBJS) $(eject_OBJS) $(halt_OBJS) $(hexdump_OBJS) $(host_OBJS) $(hostname_OBJS) $(ifconfig_OBJS) $(login_OBJS) $(mktemp_OBJS) $(mount_OBJS) $(netid_OBJS) $(poweroff_OBJS) $(protoid_OBJS) $(reboot_OBJS) $(servid_OBJS) $(tar_OBJS) $(umount_OBJS) $(uptime_OBJS) $(w_OBJS)
+	$(RM) -- $(chroot_OBJS) $(clear_OBJS) $(eject_OBJS) $(halt_OBJS) $(hexdump_OBJS) $(host_OBJS) $(hostname_OBJS) $(ifconfig_OBJS) $(login_OBJS) $(mktemp_OBJS) $(mount_OBJS) $(netid_OBJS) $(poweroff_OBJS) $(protoid_OBJS) $(reboot_OBJS) $(resize_OBJS) $(servid_OBJS) $(tar_OBJS) $(umount_OBJS) $(uptime_OBJS) $(w_OBJS)
 
 distclean: clean
 	$(RM) -- $(TARGETS)
@@ -255,6 +265,8 @@ install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 $(OBJDIR)reboot $(DESTDIR)$(BINDIR)/reboot
 	$(MKDIR) $(DESTDIR)$(BINDIR)
+	$(INSTALL) -m 0755 $(OBJDIR)resize $(DESTDIR)$(BINDIR)/resize
+	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 $(OBJDIR)servid $(DESTDIR)$(BINDIR)/servid
 	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 $(OBJDIR)tar $(DESTDIR)$(BINDIR)/tar
@@ -281,6 +293,7 @@ uninstall:
 	$(RM) -- $(DESTDIR)$(BINDIR)/poweroff
 	$(RM) -- $(DESTDIR)$(BINDIR)/protoid
 	$(RM) -- $(DESTDIR)$(BINDIR)/reboot
+	$(RM) -- $(DESTDIR)$(BINDIR)/resize
 	$(RM) -- $(DESTDIR)$(BINDIR)/servid
 	$(RM) -- $(DESTDIR)$(BINDIR)/tar
 	$(RM) -- $(DESTDIR)$(BINDIR)/umount

@@ -213,6 +213,19 @@
 #undef _prefs_parse
 #undef _reboot
 
+/* resize.c */
+#undef PROGNAME
+#define main _resize_main
+#define _Prefs _resize_Prefs
+#define Prefs resize_Prefs
+#define _prefs_parse _resize_prefs_parse
+#include "../src/resize.c"
+#undef main
+#undef _Prefs
+#undef Prefs
+#undef _prefs_parse
+#undef _resize
+
 /* servid.c */
 #undef PROGNAME
 #define main _servid_main
@@ -297,6 +310,7 @@ Call calls[] =
 	{ "poweroff",	_poweroff_main	},
 	{ "protoid",	_protoid_main	},
 	{ "reboot",	_reboot_main	},
+	{ "resize",	_resize_main	},
 	{ "servid",	_servid_main	},
 	{ "tar",	_tar_main	},
 	{ "umount",	_umount_main	},

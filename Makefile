@@ -41,6 +41,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/poweroff.c \
 		$(PACKAGE)-$(VERSION)/src/protoid.c \
 		$(PACKAGE)-$(VERSION)/src/reboot.c \
+		$(PACKAGE)-$(VERSION)/src/resize.c \
 		$(PACKAGE)-$(VERSION)/src/servid.c \
 		$(PACKAGE)-$(VERSION)/src/tar.c \
 		$(PACKAGE)-$(VERSION)/src/umount.c \
