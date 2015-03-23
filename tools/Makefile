@@ -65,7 +65,7 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 0644 watch.sh $(DESTDIR)$(BINDIR)/watch.sh
+	$(INSTALL) -m 0755 watch.sh $(DESTDIR)$(BINDIR)/watch.sh
 
 uninstall:
 	$(RM) -- $(DESTDIR)$(BINDIR)/watch.sh
