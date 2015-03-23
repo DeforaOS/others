@@ -1,7 +1,7 @@
 MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 RM	= rm -f
-TARGETS	= $(OBJDIR)linuxrc $(OBJDIR)oinit $(OBJDIR)otherbox
+TARGETS	= $(OBJDIR)linuxrc $(OBJDIR)oinit $(OBJDIR)otherbox $(OBJDIR)others.c
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -41,6 +41,9 @@ otherbox_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)otherbox: $(otherbox_OBJS)
 	$(CC) -o $(OBJDIR)otherbox $(otherbox_OBJS) $(otherbox_LDFLAGS)
 
+$(OBJDIR)others.c: toolbox.sh
+	./toolbox.sh -P "$(PREFIX)" -- "$(OBJDIR)others.c"
+
 $(OBJDIR)linuxrc.o: linuxrc.c
 	$(CC) $(linuxrc_CFLAGS) -o $(OBJDIR)linuxrc.o -c linuxrc.c
 
@@ -50,11 +53,12 @@ $(OBJDIR)oinit.o: oinit.c
 $(OBJDIR)otherbox.o: otherbox.c otherbox.h
 	$(CC) $(otherbox_CFLAGS) -o $(OBJDIR)otherbox.o -c otherbox.c
 
-$(OBJDIR)others.o: others.c
+$(OBJDIR)others.o: others.c toolbox.sh
 	$(CC) $(otherbox_CFLAGS) -o $(OBJDIR)others.o -c others.c
 
 clean:
-	$(RM) -- $(linuxrc_OBJS) $(oinit_OBJS) $(otherbox_OBJS)
+	$(RM) -- $(linuxrc_OBJS) $(oinit_OBJS) $(otherbox_OBJS) $(others.c_OBJS)
+	./toolbox.sh -c -P "$(PREFIX)" -- "others.c"
 
 distclean: clean
 	$(RM) -- $(TARGETS)

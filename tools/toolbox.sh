@@ -17,12 +17,13 @@
 
 
 #variables
-YEAR=`date '+%Y'`
+YEAR=$(date '+%Y')
 
 
 #functions
 #includes
-includes() {
+_includes()
+{
 	BASENAME="$1"
 	PROGRAM="$2"
 
@@ -44,8 +45,12 @@ EOF
 }
 
 
-#main
-cat > "others.c" << EOF
+#toolbox
+_toolbox()
+{
+	target="$1"
+
+	cat > "$target" << EOF
 /* \$Id\$ */
 /* Copyright (c) 2011-$YEAR Pierre Pronchery <khorben@defora.org> */
 /* This file is part of DeforaOS Unix others */
@@ -66,16 +71,16 @@ cat > "others.c" << EOF
 #include "otherbox.h"
 
 EOF
-for i in ../src/*.c; do
-	BASENAME=`basename $i`
-	PROGRAM=${BASENAME%%.c}
-	#there is an exception
-	[ "$PROGRAM" = "utmpx" ] && continue
-	includes "$BASENAME" "$PROGRAM"
-	CALLS="$CALLS
+	for i in ../src/*.c; do
+		BASENAME=$(basename "$i")
+		PROGRAM=${BASENAME%%.c}
+		#there is an exception
+		[ "$PROGRAM" = "utmpx" ] && continue
+		_includes "$BASENAME" "$PROGRAM"
+		CALLS="$CALLS
 	{ \"$PROGRAM\",	_${PROGRAM}_main	},"
-done >> "others.c"
-cat >> "others.c" << EOF
+	done >> "$target"
+cat >> "$target" << EOF
 
 
 Call calls[] =
@@ -84,3 +89,32 @@ $CALLS
 	{ NULL,		NULL		}
 };
 EOF
+}
+
+
+#main
+clean=0
+while getopts "cP:" name; do
+	case "$name" in
+		c)
+			clean=1
+			;;
+		P)
+			#we can ignore it
+			;;
+		?)
+			_usage
+			exit $?
+			;;
+	esac
+done
+shift $(($OPTIND - 1))
+if [ $# -ne 1 ]; then
+	_usage
+	exit $?
+fi
+
+[ $clean -ne 0 ] && exit 0
+
+target="$1"
+_toolbox "$target"

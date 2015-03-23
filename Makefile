@@ -56,7 +56,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/tools/otherbox.c \
 		$(PACKAGE)-$(VERSION)/tools/others.c \
 		$(PACKAGE)-$(VERSION)/tools/Makefile \
-		$(PACKAGE)-$(VERSION)/tools/others.sh \
+		$(PACKAGE)-$(VERSION)/tools/toolbox.sh \
 		$(PACKAGE)-$(VERSION)/tools/otherbox.h \
 		$(PACKAGE)-$(VERSION)/tools/watch.sh \
 		$(PACKAGE)-$(VERSION)/tools/project.conf \
