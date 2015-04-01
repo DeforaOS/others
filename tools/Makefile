@@ -1,7 +1,7 @@
 MKDIR	= mkdir -m 0755 -p
 INSTALL	= install
 RM	= rm -f
-TARGETS	= $(OBJDIR)linuxrc $(OBJDIR)oinit $(OBJDIR)otherbox $(OBJDIR)others.c
+TARGETS	= $(OBJDIR)linuxrc $(OBJDIR)mksparse $(OBJDIR)oinit $(OBJDIR)otherbox $(OBJDIR)others.c
 OBJDIR	=
 PREFIX	= /usr/local
 DESTDIR	=
@@ -27,6 +27,13 @@ linuxrc_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
 $(OBJDIR)linuxrc: $(linuxrc_OBJS)
 	$(CC) -o $(OBJDIR)linuxrc $(linuxrc_OBJS) $(linuxrc_LDFLAGS)
 
+mksparse_OBJS = $(OBJDIR)mksparse.o
+mksparse_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
+mksparse_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
+
+$(OBJDIR)mksparse: $(mksparse_OBJS)
+	$(CC) -o $(OBJDIR)mksparse $(mksparse_OBJS) $(mksparse_LDFLAGS)
+
 oinit_OBJS = $(OBJDIR)oinit.o
 oinit_CFLAGS = $(CPPFLAGSF) $(CPPFLAGS) $(CFLAGSF) $(CFLAGS)
 oinit_LDFLAGS = $(LDFLAGSF) $(LDFLAGS)
@@ -47,6 +54,9 @@ $(OBJDIR)others.c: toolbox.sh
 $(OBJDIR)linuxrc.o: linuxrc.c
 	$(CC) $(linuxrc_CFLAGS) -o $(OBJDIR)linuxrc.o -c linuxrc.c
 
+$(OBJDIR)mksparse.o: mksparse.c
+	$(CC) $(mksparse_CFLAGS) -o $(OBJDIR)mksparse.o -c mksparse.c
+
 $(OBJDIR)oinit.o: oinit.c
 	$(CC) $(oinit_CFLAGS) -o $(OBJDIR)oinit.o -c oinit.c
 
@@ -57,7 +67,7 @@ $(OBJDIR)others.o: others.c toolbox.sh
 	$(CC) $(otherbox_CFLAGS) -o $(OBJDIR)others.o -c others.c
 
 clean:
-	$(RM) -- $(linuxrc_OBJS) $(oinit_OBJS) $(otherbox_OBJS) $(others.c_OBJS)
+	$(RM) -- $(linuxrc_OBJS) $(mksparse_OBJS) $(oinit_OBJS) $(otherbox_OBJS) $(others.c_OBJS)
 	./toolbox.sh -c -P "$(PREFIX)" -- "others.c"
 
 distclean: clean

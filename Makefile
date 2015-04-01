@@ -53,6 +53,7 @@ dist:
 		$(PACKAGE)-$(VERSION)/src/utmpx.c \
 		$(PACKAGE)-$(VERSION)/src/project.conf \
 		$(PACKAGE)-$(VERSION)/tools/linuxrc.c \
+		$(PACKAGE)-$(VERSION)/tools/mksparse.c \
 		$(PACKAGE)-$(VERSION)/tools/oinit.c \
 		$(PACKAGE)-$(VERSION)/tools/otherbox.c \
 		$(PACKAGE)-$(VERSION)/tools/others.c \
