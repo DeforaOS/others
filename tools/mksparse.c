@@ -76,7 +76,7 @@ static int _error(char const * message, int ret)
 /* usage */
 static int _usage(void)
 {
-	fputs("Usage: " PROGNAME " [-f] -s size file...\n", stderr);
+	fputs("Usage: " PROGNAME " [-f][-s size] file...\n", stderr);
 	return 1;
 }
 
@@ -105,7 +105,7 @@ int main(int argc, char * argv[])
 			default:
 				return _usage();
 		}
-	if(optind == argc || size <= 0)
+	if(optind == argc || size < 0)
 		return _usage();
 	return (_mksparse(force, size, argc - optind, &argv[optind]) == 0)
 		? 0 : 2;
