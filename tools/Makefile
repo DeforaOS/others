@@ -75,9 +75,12 @@ distclean: clean
 
 install: $(TARGETS)
 	$(MKDIR) $(DESTDIR)$(BINDIR)
+	$(INSTALL) -m 0755 $(OBJDIR)mksparse $(DESTDIR)$(BINDIR)/mksparse
+	$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 0755 watch.sh $(DESTDIR)$(BINDIR)/watch.sh
 
 uninstall:
+	$(RM) -- $(DESTDIR)$(BINDIR)/mksparse
 	$(RM) -- $(DESTDIR)$(BINDIR)/watch.sh
 
 .PHONY: all clean distclean install uninstall
