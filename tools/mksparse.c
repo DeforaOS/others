@@ -15,6 +15,7 @@
 
 
 
+#include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,7 +27,7 @@
 /* mksparse */
 /* private */
 /* prototypes */
-static int _mksparse(int force, long size, int filec, char * const argv[]);
+static int _mksparse(int force, off_t size, int filec, char * const argv[]);
 
 static int _error(char const * message, int ret);
 static int _usage(void);
@@ -34,25 +35,27 @@ static int _usage(void);
 
 /* functions */
 /* mksparse */
-static int _mksparse(int force, long size, int filec, char * const argv[])
+static int _mksparse(int force, off_t size, int filec, char * const argv[])
 {
 	int ret = 0;
+	int flags = force ? O_WRONLY | O_CREAT | O_TRUNC
+		: O_WRONLY | O_CREAT | O_TRUNC | O_EXCL;
 	int i;
-	FILE * fp;
+	int fd;
 
 	for(i = 0; i < filec; i++)
 	{
-		if((fp = fopen(argv[i], force ? "wb" : "wbx")) == NULL)
+		if((fd = open(argv[i], flags, 0666)) < 0)
 		{
 			ret = _error(argv[i], 2);
 			continue;
 		}
-		if(fseek(fp, size, SEEK_SET) != 0)
+		if(lseek(fd, size, SEEK_SET) != size)
 		{
 			ret = _error(argv[i], 2);
 			unlink(argv[i]);
 		}
-		if(fclose(fp) != 0)
+		if(close(fd) != 0)
 			ret = _error(argv[i], 2);
 	}
 	return ret;
@@ -83,7 +86,7 @@ int main(int argc, char * argv[])
 {
 	int force = 0;
 	int o;
-	long size = 0;
+	off_t size = 0;
 	char * p;
 
 	while((o = getopt(argc, argv, "fs:")) != -1)
