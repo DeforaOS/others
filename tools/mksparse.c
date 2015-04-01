@@ -42,6 +42,7 @@ static int _mksparse(int force, off_t size, int filec, char * const argv[])
 		: O_WRONLY | O_CREAT | O_TRUNC | O_EXCL;
 	int i;
 	int fd;
+	char zero = '\0';
 
 	for(i = 0; i < filec; i++)
 	{
@@ -50,7 +51,8 @@ static int _mksparse(int force, off_t size, int filec, char * const argv[])
 			ret = _error(argv[i], 2);
 			continue;
 		}
-		if(lseek(fd, size, SEEK_SET) != size)
+		if(size > 0 && (lseek(fd, size - 1, SEEK_SET) != size - 1
+					|| write(fd, &zero, 1) != 1))
 		{
 			ret = _error(argv[i], 2);
 			unlink(argv[i]);
