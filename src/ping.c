@@ -125,8 +125,9 @@ static int _ping(Prefs * prefs, char const * hostname)
 		msg.icmp.icmp_seq = htons(i);
 		msg.ts.tv_sec = htonl(tv.tv_sec);
 		msg.ts.tv_nsec = htonl(tv.tv_usec);
+		/* FIXME set the checksum */
 		if(sendto(fd, &msg, sizeof(msg), 0, (struct sockaddr *)&to,
-					sizeof(to)) != 0)
+					sizeof(to)) != sizeof(msg))
 			cnt_errors += _ping_error(hostname, 1);
 		else
 			cnt_sent++;
