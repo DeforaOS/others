@@ -47,6 +47,25 @@ typedef struct _Prefs
 } Prefs;
 #define PREFS_c	0x1
 
+struct ping_msg
+{
+	struct
+	{
+		u_int8_t icmp_type;
+		u_int8_t icmp_code;
+		u_int16_t icmp_cksum;
+		union
+		{
+			struct
+			{
+				n_short icd_id;
+				n_short icd_seq;
+			} ih_idseq;
+		} icmp_hun;
+	} icmp;
+	struct timespec ts;
+};
+
 
 /* prototypes */
 static int _ping(Prefs * prefs, char const * hostname);
@@ -58,30 +77,15 @@ static int _ping_usage(void);
 
 /* functions */
 /* ping */
+static int _ping_receive(int fd, struct timeval * now);
+
 static int _ping(Prefs * prefs, char const * hostname)
 {
 	struct addrinfo hints;
 	struct addrinfo * ai;
 	int res;
 	struct addrinfo * to;
-	struct
-	{
-		struct
-		{
-			u_int8_t icmp_type;
-			u_int8_t icmp_code;
-			u_int16_t icmp_cksum;
-			union
-			{
-				struct
-				{
-					n_short icd_id;
-					n_short icd_seq;
-				} ih_idseq;
-			} icmp_hun;
-		} icmp;
-		struct timespec ts;
-	} msg;
+	struct ping_msg msg;
 	int fd;
 	unsigned int i;
 	struct timeval tv;
@@ -134,18 +138,52 @@ static int _ping(Prefs * prefs, char const * hostname)
 		else
 			cnt_sent++;
 		if(prefs->count == 0 || i < prefs->count - 1)
-		{
-			tv.tv_sec = 1;
-			tv.tv_usec = 0;
-			if(select(0, NULL, NULL, NULL, &tv) == -1)
-				_ping_error("select", 1);
-		}
+			_ping_receive(fd, &tv);
 	}
 	printf("%u packets transmitted, %u received, %u errors\n", cnt_sent,
 			cnt_received, cnt_errors);
 	freeaddrinfo(ai);
 	if(close(fd) != 0)
 		return _ping_error("close", 1);
+	return 0;
+}
+
+static int _ping_receive(int fd, struct timeval * now)
+{
+	fd_set rfds;
+	struct timeval tv;
+	int res;
+	struct ping_msg msg;
+	struct sockaddr sa;
+	socklen_t salen;
+
+	FD_ZERO(&rfds);
+	FD_SET(fd, &rfds);
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+	if((res = select(fd + 1, &rfds, NULL, NULL, &tv)) == -1)
+		return -_ping_error("select", 1);
+	else if(res == 0)
+		return 0;
+	if(recvfrom(fd, &msg, sizeof(msg), 0, &sa, &salen) == -1)
+		return -_ping_error("recvfrom", 1);
+	/* FIXME really implement */
+	if(gettimeofday(&tv, NULL) != 0)
+		return -_ping_error("gettimeofday", 1);
+	printf("%ldms\n", ((tv.tv_sec - now->tv_sec) * 1000)
+			+ ((tv.tv_usec >= now->tv_usec)
+				? (tv.tv_usec - now->tv_usec)
+				: (now->tv_usec - tv.tv_usec)) / 1000);
+	/* wait for the remaining time */
+	if(tv.tv_sec > now->tv_sec + 1)
+		return 0;
+	if(tv.tv_sec == now->tv_sec + 1 && tv.tv_usec >= tv.tv_sec)
+		return 0;
+	tv.tv_sec = 0;
+	tv.tv_usec = (tv.tv_usec >= now->tv_usec) ? (tv.tv_usec - now->tv_usec)
+		: (now->tv_usec - tv.tv_usec);
+	if(select(0, NULL, NULL, NULL, &tv) == -1)
+		return -_ping_error("select", 1);
 	return 0;
 }
 
