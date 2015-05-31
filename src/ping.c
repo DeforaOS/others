@@ -51,15 +51,15 @@ struct ping_msg
 {
 	struct
 	{
-		u_int8_t icmp_type;
-		u_int8_t icmp_code;
-		u_int16_t icmp_cksum;
+		uint8_t icmp_type;
+		uint8_t icmp_code;
+		uint16_t icmp_cksum;
 		union
 		{
 			struct
 			{
-				n_short icd_id;
-				n_short icd_seq;
+				uint16_t icd_id;
+				uint16_t icd_seq;
 			} ih_idseq;
 		} icmp_hun;
 	} icmp;
