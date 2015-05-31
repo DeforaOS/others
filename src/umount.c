@@ -75,7 +75,7 @@ static int _umount_all(Prefs * prefs)
 		return _umount_error("getvfsstat", 1);
 	if((f = malloc(sizeof(*f) * cnt)) == NULL)
 		return _umount_error("malloc", 1);
-	if(getvfsstat(f, sizeof(*f) * cnt, ST_WAIT) != cnt)
+	if((cnt = getvfsstat(f, sizeof(*f) * cnt, ST_WAIT)) < 0)
 	{
 		free(f);
 		return _umount_error("getvfsstat", 1);
