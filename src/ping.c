@@ -22,6 +22,7 @@
 #include <string.h>
 #include <limits.h>
 #include <errno.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <netinet/in.h>
@@ -49,6 +50,7 @@ typedef struct _Prefs
 static int _ping(Prefs * prefs, char const * hostname);
 
 static int _ping_error(char const * message, int ret);
+static int _ping_gaierror(char const * message, int error);
 static int _ping_usage(void);
 
 
@@ -57,6 +59,10 @@ static int _ping_usage(void);
 static int _ping(Prefs * prefs, char const * hostname)
 {
 	const int family = AF_INET;
+	struct addrinfo hints;
+	struct addrinfo * ai;
+	int res;
+	struct addrinfo * p;
 	struct sockaddr_in to;
 	struct
 	{
@@ -82,11 +88,24 @@ static int _ping(Prefs * prefs, char const * hostname)
 	unsigned int cnt_sent = 0;
 	unsigned int cnt_errors = 0;
 
-	/* FIXME really lookup the hostname */
-	memset(&to, 0, sizeof(to));
-	to.sin_len = sizeof(to);
-	to.sin_family = family;
-	to.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	/* lookup hostname */
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = family;
+	hints.ai_socktype = SOCK_STREAM;
+	if((res = getaddrinfo(hostname, NULL, &hints, &ai)) != 0)
+		return _ping_gaierror(hostname, res);
+	for(p = ai; p != NULL; p = p->ai_next)
+		if(p->ai_family == AF_INET)
+		{
+			to = *(struct sockaddr_in *)p->ai_addr;
+			break;
+		}
+	freeaddrinfo(ai);
+	if(p == NULL)
+	{
+		fprintf(stderr, "%s: %s: Host not found\n", PROGNAME, hostname);
+		return -1;
+	}
 	/* create the socket */
 	if((fd = socket(family, SOCK_RAW, IPPROTO_ICMP)) < 0)
 		return _ping_error("socket", 1);
@@ -127,6 +146,15 @@ static int _ping_error(char const * message, int ret)
 	fputs(PROGNAME ": ", stderr);
 	perror(message);
 	return ret;
+}
+
+
+/* ping_gaierror */
+static int _ping_gaierror(char const * message, int error)
+{
+	fprintf(stderr, "%s%s%s%s\n", PROGNAME ": ", message, ": ",
+			gai_strerror(error));
+	return -1;
 }
 
 
