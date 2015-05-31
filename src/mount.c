@@ -518,8 +518,9 @@ static int _mount_do(Prefs * prefs, char const * special, char const * node)
 			return _mount_supported[i].callback(
 					_mount_supported[i].type, flags,
 					special, node);
-	/* generic fallback */
-	return _mount_callback_generic(prefs->type, flags, special, node);
+	fprintf(stderr, "%s: %s: Filesystem not supported\n", PROGNAME,
+			prefs->type);
+	return -1;
 }
 
 static int _mount_do_mount(char const * type, int flags, char const * special,
