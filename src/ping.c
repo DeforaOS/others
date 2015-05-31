@@ -15,6 +15,7 @@
 
 
 
+#include <sys/select.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -133,7 +134,12 @@ static int _ping(Prefs * prefs, char const * hostname)
 		else
 			cnt_sent++;
 		if(prefs->count == 0 || i < prefs->count - 1)
-			sleep(1);
+		{
+			tv.tv_sec = 1;
+			tv.tv_usec = 0;
+			if(select(0, NULL, NULL, NULL, &tv) == -1)
+				_ping_error("select", 1);
+		}
 	}
 	printf("%u packets transmitted, %u received, %u errors\n", cnt_sent,
 			cnt_received, cnt_errors);
