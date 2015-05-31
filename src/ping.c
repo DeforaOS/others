@@ -86,6 +86,7 @@ static int _ping(Prefs * prefs, char const * hostname)
 	unsigned int i;
 	struct timeval tv;
 	unsigned int cnt_sent = 0;
+	unsigned int cnt_received = 0;
 	unsigned int cnt_errors = 0;
 
 	/* lookup hostname */
@@ -134,7 +135,8 @@ static int _ping(Prefs * prefs, char const * hostname)
 		if(prefs->count == 0 || i < prefs->count - 1)
 			sleep(1);
 	}
-	printf("%u packets transmitted, %u errors\n", cnt_sent, cnt_errors);
+	printf("%u packets transmitted, %u received, %u errors\n", cnt_sent,
+			cnt_received, cnt_errors);
 	if(close(fd) != 0)
 		return _ping_error("close", 1);
 	return 0;
