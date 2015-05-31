@@ -28,7 +28,7 @@
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <netinet/in.h>
-#if defined(__NetBSD__)
+#if defined(__linux__) || defined(__NetBSD__)
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 #endif
