@@ -187,7 +187,7 @@ static int _ping_receive(int family, int fd, struct timeval * now)
 	/* wait for the remaining time */
 	if(tv.tv_sec > now->tv_sec + 1)
 		return 1;
-	if(tv.tv_sec == now->tv_sec + 1 && tv.tv_usec >= tv.tv_sec)
+	if(tv.tv_sec == now->tv_sec + 1 && tv.tv_usec >= now->tv_usec)
 		return 1;
 	tv.tv_sec = 0;
 	tv.tv_usec = (tv.tv_usec >= now->tv_usec) ? (tv.tv_usec - now->tv_usec)
