@@ -57,6 +57,7 @@ static int _ping_usage(void);
 static int _ping(Prefs * prefs, char const * hostname)
 {
 	struct in_addr to;
+	const int family = AF_INET;
 	struct
 	{
 		struct
@@ -82,7 +83,7 @@ static int _ping(Prefs * prefs, char const * hostname)
 	unsigned int cnt_errors = 0;
 
 	/* FIXME lookup the hostname */
-	if((fd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
+	if((fd = socket(family, SOCK_RAW, IPPROTO_ICMP)) < 0)
 		return _ping_error("socket", 1);
 	/* initialize the packet */
 	memset(&msg, 0, sizeof(msg));
