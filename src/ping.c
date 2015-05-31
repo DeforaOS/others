@@ -115,7 +115,7 @@ static int _ping(Prefs * prefs, char const * hostname)
 	msg.icmp.icmp_type = ICMP_ECHO;
 	printf("PING %s (%s): %lu data bytes\n", hostname,
 			inet_ntoa(to.sin_addr),
-			sizeof(struct ip) + sizeof(msg));
+			sizeof(msg));
 	for(i = 0; prefs->count == 0 || i < prefs->count; i++)
 	{
 		if(gettimeofday(&tv, NULL) != 0)
