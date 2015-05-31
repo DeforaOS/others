@@ -56,8 +56,8 @@ static int _ping_usage(void);
 /* ping */
 static int _ping(Prefs * prefs, char const * hostname)
 {
-	struct in_addr to;
 	const int family = AF_INET;
+	struct sockaddr_in to;
 	struct
 	{
 		struct
@@ -82,14 +82,19 @@ static int _ping(Prefs * prefs, char const * hostname)
 	unsigned int cnt_sent = 0;
 	unsigned int cnt_errors = 0;
 
-	/* FIXME lookup the hostname */
+	/* FIXME really lookup the hostname */
+	memset(&to, 0, sizeof(to));
+	to.sin_len = sizeof(to);
+	to.sin_family = family;
+	to.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+	/* create the socket */
 	if((fd = socket(family, SOCK_RAW, IPPROTO_ICMP)) < 0)
 		return _ping_error("socket", 1);
 	/* initialize the packet */
 	memset(&msg, 0, sizeof(msg));
-	to.s_addr = htonl(INADDR_LOOPBACK);
 	msg.icmp.icmp_type = ICMP_ECHO;
-	printf("PING %s (%s): %lu data bytes\n", hostname, inet_ntoa(to),
+	printf("PING %s (%s): %lu data bytes\n", hostname,
+			inet_ntoa(to.sin_addr),
 			sizeof(struct ip) + sizeof(msg));
 	for(i = 0; prefs->count == 0 || i < prefs->count; i++)
 	{
