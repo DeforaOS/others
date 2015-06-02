@@ -28,10 +28,6 @@
 #include <arpa/inet.h>
 #include <net/if.h>
 #include <netinet/in.h>
-#if defined(__linux__) || defined(__NetBSD__)
-# include <netinet/ip.h>
-# include <netinet/ip_icmp.h>
-#endif
 
 #ifndef PROGNAME
 # define PROGNAME "ping"
@@ -54,17 +50,17 @@ struct ping_msg
 		uint8_t icmp_type;
 		uint8_t icmp_code;
 		uint16_t icmp_cksum;
-		union
-		{
-			struct
-			{
-				uint16_t icd_id;
-				uint16_t icd_seq;
-			} ih_idseq;
-		} icmp_hun;
+		uint16_t icmp_id;
+		uint16_t icmp_seq;
 	} icmp;
 	struct timespec ts;
 };
+
+
+/* constants */
+#ifndef ICMP_ECHO
+# define ICMP_ECHO	8
+#endif
 
 
 /* prototypes */
