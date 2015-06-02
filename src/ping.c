@@ -46,7 +46,6 @@ typedef struct _Prefs
 	int family;
 	unsigned int count;
 } Prefs;
-#define PREFS_c	0x1
 
 struct ping_msg
 {
