@@ -89,7 +89,7 @@ static int _mktemp_usage(void)
 int main(int argc, char * argv[])
 {
 	int o;
-	char const * template = "/tmp/tmp.XXXXXX";
+	char const * template = P_tmpdir "/tmp.XXXXXX";
 
 	while((o = getopt(argc, argv, "")) != -1)
 		switch(o)
