@@ -62,6 +62,7 @@ static int _ifconfig_usage(void);
 static char const * _inet_str(struct sockaddr * addr);
 
 static char const * _mac_media_str(int type);
+static char const * _mac_status_str(int state);
 
 
 /* functions */
@@ -75,6 +76,9 @@ static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr);
 static void _show_mac_flags(unsigned short flags);
 #endif
 static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr);
+#ifdef SIOCGIFDATA
+static int _mac_status(Prefs prefs, int fd, struct if_data * ifd);
+#endif
 static int _show_inet(Prefs prefs, int fd, struct ifreq * ifr);
 static int _show_inet6(Prefs prefs, char const * name);
 #if !defined(__DeforaOS__) && (defined(__NetBSD__) || defined(__FreeBSD__))
@@ -160,6 +164,10 @@ static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr)
 #endif
 	putchar('\n');
 	ret |= _mac_media(prefs, fd, ifr);
+#ifdef SIOCGIFDATA
+	if(ret == 0)
+		ret |= _mac_status(prefs, fd, &ifi.ifdr_data);
+#endif
 	return ret;
 }
 
@@ -237,6 +245,14 @@ static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr)
 #endif
 	return 0;
 }
+
+#ifdef SIOCGIFDATA
+static int _mac_status(Prefs prefs, int fd, struct if_data * ifd)
+{
+	printf("\tstatus: %s\n", _mac_status_str(ifd->ifi_link_state));
+	return 0;
+}
+#endif
 
 static int _show_inet(Prefs prefs, int fd, struct ifreq * ifr)
 {
@@ -384,6 +400,25 @@ static char const * _mac_media_str(int type)
 	snprintf(buf, sizeof(buf), "%s%s", is[i].str, (type & 0x1f) == 0
 			? " autoselect" : "");
 	return buf;
+}
+
+
+/* mac_status_str */
+static char const * _mac_status_str(int state)
+{
+	switch(state)
+	{
+#ifdef LINK_STATE_DOWN
+		case LINK_STATE_DOWN:		return "inactive";
+#endif
+#ifdef LINK_STATE_UP
+		case LINK_STATE_UP:		return "active";
+#endif
+#ifdef LINK_STATE_UNKNOWN
+		case LINK_STATE_UNKNOWN:
+#endif
+		default:			return "unknown";
+	}
 }
 
 
