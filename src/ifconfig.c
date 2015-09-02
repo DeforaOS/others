@@ -249,7 +249,11 @@ static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr)
 #ifdef SIOCGIFDATA
 static int _mac_status(struct if_data * ifd)
 {
-	printf("\tstatus: %s\n", _mac_status_str(ifd->ifi_link_state));
+	char const * status;
+
+	if((status = _mac_status_str(ifd->ifi_link_state)) == NULL)
+		return 0;
+	printf("\tstatus: %s\n", status);
 	return 0;
 }
 #endif
@@ -417,7 +421,7 @@ static char const * _mac_status_str(int state)
 #ifdef LINK_STATE_UNKNOWN
 		case LINK_STATE_UNKNOWN:
 #endif
-		default:			return "unknown";
+		default:			return NULL;
 	}
 }
 
