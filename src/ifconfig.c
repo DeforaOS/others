@@ -77,7 +77,7 @@ static void _show_mac_flags(unsigned short flags);
 #endif
 static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr);
 #ifdef SIOCGIFDATA
-static int _mac_status(Prefs prefs, int fd, struct if_data * ifd);
+static int _mac_status(struct if_data * ifd);
 #endif
 static int _show_inet(Prefs prefs, int fd, struct ifreq * ifr);
 static int _show_inet6(Prefs prefs, char const * name);
@@ -166,7 +166,7 @@ static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr)
 	ret |= _mac_media(prefs, fd, ifr);
 #ifdef SIOCGIFDATA
 	if(ret == 0)
-		ret |= _mac_status(prefs, fd, &ifi.ifdr_data);
+		ret |= _mac_status(&ifi.ifdr_data);
 #endif
 	return ret;
 }
@@ -247,7 +247,7 @@ static int _mac_media(Prefs prefs, int fd, struct ifreq * ifr)
 }
 
 #ifdef SIOCGIFDATA
-static int _mac_status(Prefs prefs, int fd, struct if_data * ifd)
+static int _mac_status(struct if_data * ifd)
 {
 	printf("\tstatus: %s\n", _mac_status_str(ifd->ifi_link_state));
 	return 0;
