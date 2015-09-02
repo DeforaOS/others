@@ -75,7 +75,11 @@
 #include <errno.h>
 
 #ifndef PROGNAME
-# define PROGNAME "mount"
+# define PROGNAME	"mount"
+#endif
+
+#ifndef FSTAB
+# define FSTAB		"/etc/fstab"
 #endif
 
 /* portability */
@@ -345,7 +349,7 @@ static int _mount_all(Prefs * prefs, char const * node)
 {
 	int ret = 0;
 	Prefs p;
-	const char fstab[] = "/etc/fstab";
+	const char fstab[] = FSTAB;
 	FILE * fp;
 	char buf[128];
 	size_t len;
