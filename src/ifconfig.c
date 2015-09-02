@@ -134,16 +134,15 @@ static int _ifconfig_show(Prefs prefs, char const * name)
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 		return _ifconfig_error("socket", 1);
 	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s", name);
-	ret = _show_mac(prefs, fd, &ifr);
-	ret |= _show_inet(prefs, fd, &ifr);
+	if((ret = _show_mac(prefs, fd, &ifr)) == 0
+			&& (ret |= _show_inet(prefs, fd, &ifr)) == 0)
+		ret |= _show_inet6(prefs, name);
 	close(fd);
-	ret |= _show_inet6(prefs, name);
 	return ret;
 }
 
 static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr)
 {
-	int ret = 0;
 #ifdef SIOCGIFDATA
 	struct ifdatareq ifi;
 #endif
@@ -151,24 +150,31 @@ static int _show_mac(Prefs prefs, int fd, struct ifreq * ifr)
 	printf("%s:", ifr->ifr_name);
 #ifdef SIOCGIFFLAGS
 	if(ioctl(fd, SIOCGIFFLAGS, ifr) != 0)
-		ret |= _ifconfig_error("SIOCGIFFLAGS", 1);
+	{
+		_ifconfig_error(ifr->ifr_name, 1);
+		if(errno == ENXIO)
+			return -1;
+	}
 	else
 		_show_mac_flags(ifr->ifr_flags);
 #endif
 #ifdef SIOCGIFDATA
 	memcpy(ifi.ifdr_name, ifr->ifr_name, sizeof(ifi.ifdr_name));
 	if(ioctl(fd, SIOCGIFDATA, &ifi) != 0)
-		ret |= -_ifconfig_error("SIOCGIFDATA", 1);
+	{
+		_ifconfig_error(ifr->ifr_name, 1);
+		if(errno == ENXIO)
+			return -1;
+		_mac_media(prefs, fd, ifr);
+	}
 	else
-		printf(" mtu %lu", ifi.ifdr_data.ifi_mtu);
+	{
+		printf(" mtu %lu\n", ifi.ifdr_data.ifi_mtu);
+		_mac_media(prefs, fd, ifr);
+		_mac_status(&ifi.ifdr_data);
+	}
 #endif
-	putchar('\n');
-	ret |= _mac_media(prefs, fd, ifr);
-#ifdef SIOCGIFDATA
-	if(ret == 0)
-		ret |= _mac_status(&ifi.ifdr_data);
-#endif
-	return ret;
+	return 0;
 }
 
 #ifdef SIOCGIFFLAGS
