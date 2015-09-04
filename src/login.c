@@ -79,9 +79,9 @@ static int _login_do(char const * user)
 		return 0;
 	}
 	if(setgid(pw->pw_gid) != 0)
-		return _login_error("setgid", 1);
+		return -_login_error("setgid", 1);
 	if(setuid(pw->pw_uid) != 0)
-		return _login_error("setuid", 1);
+		return -_login_error("setuid", 1);
 	if(_login_nologin() != 0)
 		return -1;
 	/* FIXME sanitize environment */
