@@ -24,7 +24,10 @@
 #include <errno.h>
 
 #ifndef PROGNAME
-# define PROGNAME "login"
+# define PROGNAME	"login"
+#endif
+#ifndef LOGIN_NOLOGIN
+# define LOGIN_NOLOGIN	"/etc/nologin"
 #endif
 
 
@@ -34,6 +37,7 @@
 static int _login(char const * user);
 
 static int _login_error(char const * message, int ret);
+static int _login_nologin(void);
 static int _login_usage(void);
 
 
@@ -78,6 +82,8 @@ static int _login_do(char const * user)
 		return _login_error("setgid", 1);
 	if(setuid(pw->pw_uid) != 0)
 		return _login_error("setuid", 1);
+	if(_login_nologin() != 0)
+		return -1;
 	/* FIXME sanitize environment */
 	execl(pw->pw_shell, pw->pw_shell, NULL);
 	exit(2);
@@ -142,6 +148,30 @@ static int _login_error(char const * message, int ret)
 	fputs(PROGNAME ": ", stderr);
 	perror(message);
 	return ret;
+}
+
+
+/* login_nologin */
+static int _login_nologin(void)
+{
+	FILE * fp;
+	char buf[BUFSIZ];
+	size_t size;
+
+	if((fp = fopen(LOGIN_NOLOGIN, "r")) == NULL)
+	{
+		if(errno == ENOENT)
+			return 0;
+		return -_login_error(LOGIN_NOLOGIN, 1);
+	}
+	fprintf(stdout, "%s\n", "LOGGING IN IS DENIED");
+	while((size = fread(buf, sizeof(*buf), sizeof(buf), fp)) > 0)
+		fwrite(buf, sizeof(*buf), size, stdout);
+	if(!feof(fp))
+		_login_error(LOGIN_NOLOGIN, 1);
+	fclose(fp);
+	fputc('\n', stdout);
+	return -1;
 }
 
 
