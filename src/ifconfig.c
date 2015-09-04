@@ -81,7 +81,7 @@ static int _mac_status(struct if_data * ifd);
 #endif
 static int _show_inet(Prefs prefs, int fd, struct ifreq * ifr);
 static int _show_inet6(Prefs prefs, char const * name);
-#if !defined(__DeforaOS__) && (defined(__NetBSD__) || defined(__FreeBSD__))
+#ifdef SIOCGIFDSTADDR_IN6
 static int _inet6_do(Prefs prefs, char const * name, int fd,
 		struct ifaddrs * ifa);
 #else
@@ -320,7 +320,7 @@ static int _show_inet6(Prefs prefs, char const * name)
 	return ret;
 }
 
-#if !defined(__DeforaOS__) && (defined(__FreeBSD__) || defined(__NetBSD__))
+#ifdef SIOCGIFDSTADDR_IN6
 static int _inet6_do(Prefs prefs, char const * name, int fd,
 		struct ifaddrs * ifa)
 {
