@@ -86,6 +86,7 @@ static int _login_do(char const * user)
 		return -1;
 	/* FIXME sanitize environment */
 	execl(pw->pw_shell, pw->pw_shell, NULL);
+	_login_error(pw->pw_shell, 1);
 	exit(2);
 	return 0;
 }
