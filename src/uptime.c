@@ -15,6 +15,10 @@
 
 
 
+#if defined(__NetBSD__)
+# include <sys/param.h>
+# include <sys/sysctl.h>
+#endif
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -46,6 +50,11 @@ static int _uptime(void)
 	struct tm * tm = NULL;
 	char time[9];
 	char uptime[9] = "unknown";
+#if defined(__NetBSD__)
+	int name[2] = { CTL_KERN, KERN_BOOTTIME };
+	struct timeval uptv;
+	size_t s = sizeof(uptv);
+#endif
 	unsigned int nusers;
 	struct utmpx * ut;
 	double loadavg[3];
@@ -57,7 +66,21 @@ static int _uptime(void)
 		return _uptime_error("gmtime", 1);
 	if(strftime(time, sizeof(time), "%X", tm) == 0)
 		return _uptime_error("strftime", 1);
-	/* FIXME uptime is not portable afaik */
+	/* FIXME uptime is not portable afaik:
+	 * - investigate microuptime(9) */
+#if defined(__NetBSD__)
+	if(sysctl(name, sizeof(name) / sizeof(*name), &uptv, &s, NULL, 0) != 0)
+		return _uptime_error("sysctl", 1);
+	else
+	{
+		sec = tv.tv_sec - uptv.tv_sec;
+		if((tm = gmtime(&sec)) == NULL)
+			return _uptime_error("gmtime", 1);
+		/* FIXME also implement days */
+		if(strftime(uptime, sizeof(uptime), "%H:%M", tm) == 0)
+			return _uptime_error("strftime", 1);
+	}
+#endif
 #ifdef USER_PROCESS
 	for(nusers = 0; (ut = getutxent()) != NULL;)
 		if(ut->ut_type == USER_PROCESS)
