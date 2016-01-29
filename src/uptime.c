@@ -45,6 +45,7 @@ static int _uptime(void)
 	time_t sec;
 	struct tm * tm = NULL;
 	char time[9];
+	char uptime[9] = "unknown";
 	unsigned int nusers;
 	struct utmpx * ut;
 	double loadavg[3];
@@ -67,7 +68,7 @@ static int _uptime(void)
 #endif
 	if(getloadavg(loadavg, 3) != 3)
 		return _uptime_error("getloadavg", 1);
-	printf(" %s up %s, %2d%s%.2f, %.2f, %.2f\n", time, "unknown", nusers,
+	printf(" %s up %s, %2d%s%.2f, %.2f, %.2f\n", time, uptime, nusers,
 			" users, load average: ", loadavg[0], loadavg[1],
 			loadavg[2]);
 	return 0;
