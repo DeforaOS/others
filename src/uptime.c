@@ -15,7 +15,7 @@
 
 
 
-#if defined(__NetBSD__)
+#if defined(__NetBSD__) && !defined(__DeforaOS__)
 # include <sys/param.h>
 # include <sys/sysctl.h>
 #endif
@@ -50,7 +50,7 @@ static int _uptime(void)
 	struct tm * tm = NULL;
 	char time[9];
 	char uptime[9] = "unknown";
-#if defined(__NetBSD__)
+#if defined(__NetBSD__) && !defined(__DeforaOS__)
 	int name[2] = { CTL_KERN, KERN_BOOTTIME };
 	struct timeval uptv;
 	size_t s = sizeof(uptv);
@@ -68,7 +68,7 @@ static int _uptime(void)
 		return _uptime_error("strftime", 1);
 	/* FIXME uptime is not portable afaik:
 	 * - investigate microuptime(9) */
-#if defined(__NetBSD__)
+#if defined(__NetBSD__) && !defined(__DeforaOS__)
 	if(sysctl(name, sizeof(name) / sizeof(*name), &uptv, &s, NULL, 0) != 0)
 		return _uptime_error("sysctl", 1);
 	else
