@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 
 /* servid */
