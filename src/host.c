@@ -43,7 +43,9 @@ static int _host(int family, char * hostname)
 	struct addrinfo * ai;
 	int res;
 	struct addrinfo * p;
+	char buf[128];
 	struct sockaddr_in * sa;
+	struct sockaddr_in6 * sa6;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = family;
@@ -51,11 +53,22 @@ static int _host(int family, char * hostname)
 	if((res = getaddrinfo(hostname, NULL, &hints, &ai)) != 0)
 		return _host_gaierror(hostname, res);
 	for(p = ai; p != NULL; p = p->ai_next)
-		if(p->ai_family == AF_INET)
+		switch(p->ai_family)
 		{
-			sa = (struct sockaddr_in *)p->ai_addr;
-			printf("%s has address %s\n", hostname,
-					inet_ntoa(sa->sin_addr));
+			case AF_INET:
+				sa = (struct sockaddr_in *)p->ai_addr;
+				if(inet_ntop(p->ai_family, &sa->sin_addr, buf,
+							sizeof(buf)) != NULL)
+					printf("%s has address %s\n",
+							hostname, buf);
+				break;
+			case AF_INET6:
+				sa6 = (struct sockaddr_in6 *)p->ai_addr;
+				if(inet_ntop(p->ai_family, &sa6->sin6_addr, buf,
+							sizeof(buf)) != NULL)
+					printf("%s has IPv6 address %s\n",
+							hostname, buf);
+				break;
 		}
 	freeaddrinfo(ai);
 	return 0;
