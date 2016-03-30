@@ -88,6 +88,9 @@ static int _ping(Prefs * prefs, char const * hostname)
 	unsigned int cnt_sent = 0;
 	unsigned int cnt_received = 0;
 	unsigned int cnt_errors = 0;
+	char buf[128];
+	struct sockaddr_in * sa;
+	struct sockaddr_in6 * sa6;
 
 	/* lookup hostname */
 	memset(&hints, 0, sizeof(hints));
@@ -113,10 +116,23 @@ static int _ping(Prefs * prefs, char const * hostname)
 	/* initialize the packet */
 	memset(&msg, 0, sizeof(msg));
 	msg.icmp.icmp_type = ICMP_ECHO;
-	printf("PING %s (%s): %lu data bytes\n", hostname,
-			(to->ai_family == AF_INET) ? inet_ntoa(
-				((struct sockaddr_in *)to->ai_addr)->sin_addr)
-			: "unknown", sizeof(msg));
+	printf("PING %s", hostname);
+	switch(to->ai_family)
+	{
+		case AF_INET:
+			sa = (struct sockaddr_in *)to->ai_addr;
+			if(inet_ntop(to->ai_family, &sa->sin_addr, buf,
+						sizeof(buf)) != NULL)
+				printf(" (%s)", buf);
+			break;
+		case AF_INET6:
+			sa6 = (struct sockaddr_in6 *)to->ai_addr;
+			if(inet_ntop(to->ai_family, &sa6->sin6_addr, buf,
+						sizeof(buf)) != NULL)
+				printf(" (%s)", buf);
+			break;
+	}
+	printf(": %lu data bytes\n", sizeof(msg));
 	for(i = 0; prefs->count == 0 || i < prefs->count; i++)
 	{
 		if(gettimeofday(&tv, NULL) != 0)
