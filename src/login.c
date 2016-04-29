@@ -22,6 +22,7 @@
 #include <pwd.h>
 #include <signal.h>
 #include <errno.h>
+#include <termios.h>
 
 #ifndef PROGNAME
 # define PROGNAME	"login"
@@ -120,11 +121,32 @@ static char const * _do_ask_username(void)
 static char const * _do_ask_password(void)
 {
 	static char buf[256];
+	struct termios t1;
+	struct termios t2;
 	size_t len;
 	int c;
+	char * p;
 
 	fputs("password: ", stderr);
-	if(fgets(buf, sizeof(buf), stdin) == NULL)
+	if(tcgetattr(fileno(stdin), &t1) != 0)
+	{
+		fputc('\n', stderr);
+		_login_error("tcgetattr", 1);
+		return NULL;
+	}
+	t2 = t1;
+	t2.c_lflag &= ~ECHO;
+	if(tcsetattr(fileno(stdin), TCSAFLUSH, &t2) != 0)
+	{
+		fputc('\n', stderr);
+		_login_error("tcsetattr", 1);
+		return NULL;
+	}
+	p = fgets(buf, sizeof(buf), stdin);
+	fputc('\n', stderr);
+	if(tcsetattr(fileno(stdin), TCSAFLUSH, &t1) != 0)
+		_login_error("tcsetattr", 1);
+	if(p == NULL)
 	{
 		_login_error("fgets", 1);
 		return NULL;
