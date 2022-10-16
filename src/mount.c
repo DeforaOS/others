@@ -106,7 +106,7 @@ struct procfs_args
 /* types */
 typedef struct _Prefs
 {
-	int flags;
+	unsigned int flags;
 	char const * options;
 	char const * type;
 } Prefs;
@@ -117,57 +117,57 @@ typedef struct _Prefs
 
 /* prototypes */
 #ifdef MT_ADOSFS
-static int _mount_callback_adosfs(char const * type, int flags,
+static int _mount_callback_adosfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_EXT2FS
-static int _mount_callback_ext2fs(char const * type, int flags,
+static int _mount_callback_ext2fs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_FAT
-static int _mount_callback_fat(char const * type, int flags,
+static int _mount_callback_fat(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_FFS
-static int _mount_callback_ffs(char const * type, int flags,
+static int _mount_callback_ffs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
-static int _mount_callback_generic(char const * type, int flags,
+static int _mount_callback_generic(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #ifdef MT_HFS
-static int _mount_callback_hfs(char const * type, int flags,
+static int _mount_callback_hfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_ISO9660
-static int _mount_callback_iso9660(char const * type, int flags,
+static int _mount_callback_iso9660(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_MFS
-static int _mount_callback_mfs(char const * type, int flags,
+static int _mount_callback_mfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_NFS
-static int _mount_callback_nfs(char const * type, int flags,
+static int _mount_callback_nfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_NTFS
-static int _mount_callback_ntfs(char const * type, int flags,
+static int _mount_callback_ntfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_NULLFS
-static int _mount_callback_nullfs(char const * type, int flags,
+static int _mount_callback_nullfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_PROCFS
-static int _mount_callback_procfs(char const * type, int flags,
+static int _mount_callback_procfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_TMPFS
-static int _mount_callback_tmpfs(char const * type, int flags,
+static int _mount_callback_tmpfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 #ifdef MT_UNIONFS
-static int _mount_callback_unionfs(char const * type, int flags,
+static int _mount_callback_unionfs(char const * type, unsigned int flags,
 		char const * special, char const * node);
 #endif
 
@@ -178,7 +178,7 @@ static const struct
 {
 	size_t len;
 	char const * name;
-	int flags;
+	unsigned int flags;
 } _mount_options[] =
 {
 #ifdef MNT_ASYNC
@@ -271,8 +271,8 @@ static const struct
 {
 	char * name;
 	char * type;
-	int (*callback)(char const * type, int flags, char const * special,
-			char const * node);
+	int (*callback)(char const * type, unsigned int flags,
+			char const * special, char const * node);
 } _mount_supported[] =
 {
 #ifdef MT_ADOSFS
@@ -333,9 +333,10 @@ static int _mount_usage(void);
 static int _mount_all(Prefs * prefs, char const * node);
 static int _mount_print(void);
 static int _mount_do(Prefs * prefs, char const * special, char const * node);
-static int _mount_do_mount(char const * type, int flags, char const * special,
-		char const * node, void * data, size_t datalen);
-static void _mount_do_options(Prefs * prefs, int * flags);
+static int _mount_do_mount(char const * type, unsigned int flags,
+		char const * special, char const * node,
+		void * data, size_t datalen);
+static void _mount_do_options(Prefs * prefs, unsigned int * flags);
 
 static int _mount(Prefs * prefs, char const * special, char const * node)
 {
@@ -491,7 +492,7 @@ static int _mount_print(void)
 
 static int _mount_do(Prefs * prefs, char const * special, char const * node)
 {
-	int flags = 0;
+	unsigned int flags = 0;
 	size_t i;
 
 #ifdef MF_FORCE
@@ -527,8 +528,9 @@ static int _mount_do(Prefs * prefs, char const * special, char const * node)
 	return -1;
 }
 
-static int _mount_do_mount(char const * type, int flags, char const * special,
-		char const * node, void * data, size_t datalen)
+static int _mount_do_mount(char const * type, unsigned int flags,
+		char const * special, char const * node,
+		void * data, size_t datalen)
 {
 	struct stat st;
 
@@ -560,7 +562,7 @@ static int _mount_do_mount(char const * type, int flags, char const * special,
 	}
 }
 
-static void _mount_do_options(Prefs * prefs, int * flags)
+static void _mount_do_options(Prefs * prefs, unsigned int * flags)
 {
 	char const * o;
 	size_t i;
@@ -578,10 +580,7 @@ static void _mount_do_options(Prefs * prefs, int * flags)
 					&& strncmp(_mount_options[j].name, o, i)
 					== 0)
 			{
-				if(_mount_options[j].flags >= 0)
-					*flags |= _mount_options[j].flags;
-				else
-					*flags &= ~(_mount_options[j].flags);
+				*flags |= _mount_options[j].flags;
 				break;
 			}
 		o += i;
@@ -593,7 +592,7 @@ static void _mount_do_options(Prefs * prefs, int * flags)
 }
 
 #ifdef MT_ADOSFS
-static int _mount_callback_adosfs(char const * type, int flags,
+static int _mount_callback_adosfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -620,7 +619,7 @@ static int _mount_callback_adosfs(char const * type, int flags,
 #endif
 
 #ifdef MT_EXT2FS
-static int _mount_callback_ext2fs(char const * type, int flags,
+static int _mount_callback_ext2fs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -638,7 +637,7 @@ static int _mount_callback_ext2fs(char const * type, int flags,
 #endif
 
 #ifdef MT_FAT
-static int _mount_callback_fat(char const * type, int flags,
+static int _mount_callback_fat(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -667,7 +666,7 @@ static int _mount_callback_fat(char const * type, int flags,
 #endif
 
 #ifdef MT_FFS
-static int _mount_callback_ffs(char const * type, int flags,
+static int _mount_callback_ffs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -684,7 +683,7 @@ static int _mount_callback_ffs(char const * type, int flags,
 }
 #endif
 
-static int _mount_callback_generic(char const * type, int flags,
+static int _mount_callback_generic(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	struct
@@ -705,7 +704,7 @@ static int _mount_callback_generic(char const * type, int flags,
 }
 
 #ifdef MT_HFS
-static int _mount_callback_hfs(char const * type, int flags,
+static int _mount_callback_hfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -724,7 +723,7 @@ static int _mount_callback_hfs(char const * type, int flags,
 #endif
 
 #ifdef MT_ISO9660
-static int _mount_callback_iso9660(char const * type, int flags,
+static int _mount_callback_iso9660(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	struct iso_args iso9660;
@@ -740,7 +739,7 @@ static int _mount_callback_iso9660(char const * type, int flags,
 #endif
 
 #ifdef MT_MFS
-static int _mount_callback_mfs(char const * type, int flags,
+static int _mount_callback_mfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -760,7 +759,7 @@ static int _mount_callback_mfs(char const * type, int flags,
 #endif
 
 #ifdef MT_NFS
-static int _mount_callback_nfs(char const * type, int flags,
+static int _mount_callback_nfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -792,7 +791,7 @@ static int _mount_callback_nfs(char const * type, int flags,
 #endif
 
 #ifdef MT_NTFS
-static int _mount_callback_ntfs(char const * type, int flags,
+static int _mount_callback_ntfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -818,7 +817,7 @@ static int _mount_callback_ntfs(char const * type, int flags,
 #endif
 
 #ifdef MT_NULLFS
-static int _mount_callback_nullfs(char const * type, int flags,
+static int _mount_callback_nullfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -836,7 +835,7 @@ static int _mount_callback_nullfs(char const * type, int flags,
 #endif
 
 #ifdef MT_PROCFS
-static int _mount_callback_procfs(char const * type, int flags,
+static int _mount_callback_procfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	struct procfs_args procfs;
@@ -851,7 +850,7 @@ static int _mount_callback_procfs(char const * type, int flags,
 #endif
 
 #ifdef MT_TMPFS
-static int _mount_callback_tmpfs(char const * type, int flags,
+static int _mount_callback_tmpfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	struct tmpfs_args tmpfs;
@@ -875,7 +874,7 @@ static int _mount_callback_tmpfs(char const * type, int flags,
 #endif
 
 #ifdef MT_UNIONFS
-static int _mount_callback_unionfs(char const * type, int flags,
+static int _mount_callback_unionfs(char const * type, unsigned int flags,
 		char const * special, char const * node)
 {
 	int ret;
@@ -922,11 +921,10 @@ static int _mount_usage(void)
 	fputs("\n\nOptions supported:\n", stderr);
 	sep = "";
 	for(i = 0; _mount_options[i].name != NULL; i++)
-		if(_mount_options[i].flags >= 0)
-		{
-			fprintf(stderr, "%s%s", sep, _mount_options[i].name);
-			sep = ", ";
-		}
+	{
+		fprintf(stderr, "%s%s", sep, _mount_options[i].name);
+		sep = ", ";
+	}
 	fputs("\n\nEach filesystem may not support every option.\n", stderr);
 	return 1;
 }

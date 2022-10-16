@@ -40,7 +40,7 @@
 /* tar */
 /* private */
 /* types */
-typedef int Prefs;
+typedef unsigned int Prefs;
 #define PREFS_A  0x01
 #define PREFS_c  0x02
 #define PREFS_t  0x04

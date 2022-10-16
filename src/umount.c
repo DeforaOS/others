@@ -34,7 +34,7 @@
 /* umount */
 /* private */
 /* types */
-typedef int Prefs;
+typedef unsigned int Prefs;
 #define PREFS_a 0x1
 #define PREFS_f 0x2
 
