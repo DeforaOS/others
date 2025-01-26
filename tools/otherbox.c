@@ -22,6 +22,7 @@
 #include <libgen.h>
 #include "otherbox.h"
 
+/* constants */
 #ifndef PROGNAME
 # define PROGNAME "otherbox"
 #endif
@@ -31,7 +32,6 @@
 /* private */
 /* prototypes */
 static int _otherbox(char const * name, int argc, char * argv[]);
-
 static int _otherbox_error(char const * message, int ret);
 static int _otherbox_list(Call * calls);
 static int _otherbox_usage(void);
@@ -107,5 +107,8 @@ int main(int argc, char * argv[])
 		}
 	if(optind == argc)
 		return _otherbox_usage();
-	return _otherbox(argv[optind], argc - optind, &argv[optind]);
+	if((ret = _otherbox(argv[optind], argc - optind, &argv[optind])) >= 0)
+		return ret;
+	fprintf(stderr, "%s: %s: command not found\n", PROGNAME, argv[optind]);
+	return 127;
 }
