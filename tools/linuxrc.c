@@ -25,7 +25,9 @@
 
 /* portability */
 #if defined(MNT_RDONLY)	/* FreeBSD, NetBSD */
-# include <isofs/cd9660/cd9660_mount.h>
+# if !defined(__APPLE__)
+#  include <isofs/cd9660/cd9660_mount.h>
+# endif
 # ifndef MOUNT_CD9660
 #  define MT_ISO9660		"cd9660"
 # else
@@ -89,16 +91,21 @@ static int _linuxrc_error(char const * message, int ret)
 /* linuxrc_mount_cdrom */
 static int _linuxrc_mount_cdrom(char * source, char const * dir)
 {
+#if defined(MT_ISO9660) && !defined(__APPLE__)
 	struct iso_args ia;
 
 	memset(&ia, 0, sizeof(ia));
 	ia.fspec = source;
-#ifdef DEBUG
+# ifdef DEBUG
 	fprintf(stderr, "DEBUG: mount -t %s %s %s\n", MT_ISO9660,
 			((struct iso_args *)&ia)->fspec, dir);
-#endif
+# endif
 	return mount(MT_ISO9660, dir, MF_NOSUID | MF_NODEV | MF_RDONLY, &ia,
 			sizeof(ia));
+#else
+	errno = ENOSYS;
+	return -1;
+#endif
 }
 
 
